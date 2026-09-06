@@ -1,11 +1,23 @@
+# Theos
 .theos/
 packages/
+
+# Build outputs
 *.deb
 *.o
 *.d
-*.bak
-*.before-*
-.DS_Store
 
-# FFmpeg build outputs / large static binaries
+# Local backups / experiments
+*.bak
+*.bak*
+*.broken
+*.before-*
+Makefile.before-*
+
+# OS/editor
+.DS_Store
+*~
+*.swp
+
+# FFmpeg static binaries
 vendor/ffmpeg/lib/*.a

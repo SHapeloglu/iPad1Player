@@ -299,3 +299,16 @@ See `docs/ALPHA17_AUDIO_RUNTIME.md`.
 - No video decode was enabled.
 
 See `docs/ALPHA18_AUDIO_LOOP.md`.
+
+
+## Development Documentation
+
+Development and handoff documents:
+
+- `PROJECT_CONTEXT.md` — authoritative current project state
+- `ARCHITECTURE.md` — playback and threading architecture
+- `SESSION.md` — latest real-device development session
+- `TASK.md` — immediate development tasks
+- `BACKLOG.md` — prioritized future work
+- `SUITE_HANDOFF.md` — suite integration and responsibility handoff
+- `docs/RESPONSIBILITY.md` — application responsibility boundaries
