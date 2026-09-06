@@ -1,0 +1,8 @@
+Package: com.olap.ipad1player
+Name: iPad1Player
+Version: 0.1-alpha18
+Architecture: iphoneos-arm
+Description: Lightweight media player foundation for iPad 1 / iOS 5.1.1.
+Maintainer: OLAP Teknoloji
+Author: OLAP Teknoloji
+Section: Multimedia

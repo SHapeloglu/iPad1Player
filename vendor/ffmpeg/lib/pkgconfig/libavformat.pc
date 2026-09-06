@@ -1,0 +1,14 @@
+prefix=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg
+exec_prefix=${prefix}
+libdir=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg/lib
+includedir=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 58.76.100
+Requires: libavcodec >= 58.134.100, libavutil >= 56.70.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavformat -lm -lbz2 -lz
+Libs.private: 
+Cflags: -I${includedir}

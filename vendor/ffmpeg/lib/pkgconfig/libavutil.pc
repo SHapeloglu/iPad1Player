@@ -1,0 +1,14 @@
+prefix=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg
+exec_prefix=${prefix}
+libdir=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg/lib
+includedir=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 56.70.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil -pthread -lm -framework CoreFoundation -framework CoreVideo -framework CoreMedia
+Libs.private: 
+Cflags: -I${includedir}

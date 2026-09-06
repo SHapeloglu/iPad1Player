@@ -1,0 +1,14 @@
+prefix=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg
+exec_prefix=${prefix}
+libdir=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg/lib
+includedir=/home/yeliz/iPad1Player-v0.1-alpha18/vendor/ffmpeg/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 58.134.100
+Requires: libavutil >= 56.70.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavcodec -pthread -liconv -lm
+Libs.private: 
+Cflags: -I${includedir}

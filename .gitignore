@@ -1,0 +1,11 @@
+.theos/
+packages/
+*.deb
+*.o
+*.d
+*.bak
+*.before-*
+.DS_Store
+
+# FFmpeg build outputs / large static binaries
+vendor/ffmpeg/lib/*.a
