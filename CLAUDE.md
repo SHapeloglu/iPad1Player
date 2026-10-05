@@ -1,45 +1,29 @@
-# CLAUDE.md
+# CLAUDE.md — iPad1Player
 
-Bu dosya, bu proje üzerinde çalışırken Claude'un (Claude Code dahil) izlemesi gereken bağlamı ve kuralları içerir.
-
-## Proje
-
-**iPad1Player v0.1-alpha18** — Legacy media player for **iPad 1 / iOS 5.1.1 / armv7 / ~256 MB RAM / Objective-C / UIKit / non-ARC/MRC / Theos**.
+Media player for **iPad 1 / iOS 5.1.1 / armv7 / ~256 MB RAM**, Objective-C/UIKit, **non-ARC**, Theos, legacy iPhoneOS 6.1 SDK. Owns demux, audio/video decode and output, A/V sync, seek/resume, playback controls, subtitles, track selection, chapters, media info and playback diagnostics. Package `com.olap.ipad1player` **0.1-alpha18** (`control`).
 
 - GitHub: https://github.com/SHapeloglu/iPad1Player
+- **Authoritative handoff: `PROJECT_CONTEXT.md`.** Then `ARCHITECTURE.md`, `TASK.md`, `SESSION.md`, `SUITE_HANDOFF.md`, `docs/` (per-alpha notes ALPHA6…ALPHA18, `CODEC_MATRIX.md`, `PLAYBACK_ENGINE.md`, `MKV_BACKEND.md`, `IPAD1_COMPATIBILITY.md`, `RESPONSIBILITY.md`).
 
-## Teknoloji Yığını
+## Current state (verified on the real iPad 1)
 
-- Objective-C / UIKit (iOS, Theos ile derleniyor)
+MKV → FFmpeg demux (single `av_read_frame` thread) → AAC decode → persistent swresample → PCM ring → AudioQueue, and H.264 Main 854×480 → bounded packet queue → dedicated decode worker → YUV420P → OpenGL ES 2 YUV shader → CAEAGLLayer. Simultaneous audio+video plays without the earlier micro-freezes.
 
-## Önemli Dosyalar
+**Immediate next action (PROJECT_CONTEXT):** timestamp-aware A/V sync — audio as master clock, video PTS, bounded scheduling, controlled late-frame dropping. Don't start unrelated features before this is stable.
 
-- `Makefile`
-- `Resources/Info.plist`
-- `src/AppDelegate.m`
-- `src/main.m`
-
-Mimari ayrıntılar için bkz. `ARCHITECTURE.md`.
-
-## Sık Kullanılan Komutlar
+## Build
 
 ```bash
-# Henüz belgelenmiş komut yok — kurulum/çalıştırma adımlarını buraya ekleyin.
+make clean && make package FINALPACKAGE=1     # ARCHS=armv7, TARGET=iphone:clang:6.1:5.1, -fno-objc-arc, -DIP1_FFMPEG_BACKEND
 ```
 
-## Kurallar
+- The FFmpeg backend links **armv7 static libs** from `vendor/ffmpeg/lib` (`libavformat.a`, `libavcodec.a`, `libavutil.a`, swresample). Only headers + pkgconfig are in git; the `.a` files must exist locally (see `vendor/ffmpeg/README.md`).
+- Install over SSH with legacy `ssh-rsa` options; opened by siblings via `ipad1player://open?path=<percent-encoded-local-path>`.
 
-- Proje eski iOS sürümlerini (iPad 1 / iOS 5.1.1 dahil) hedefliyor olabilir — yeni API kullanmadan önce deployment target'ı kontrol et.
-- Derleme ortamını (Xcode veya Theos `Makefile`) değiştirmeden önce mevcut yapı dosyalarını incele; yeni kaynak dosyalarını derleme listesine (`project.pbxproj` / Makefile `*_FILES`) eklemeyi unutma.
-- `.env`, parola, token ve API anahtarlarını asla commit etme.
-- Her çalışma oturumunun sonunda `session.md`ye kısa kayıt düş; görev durumunu `task.md`de güncelle.
-- Önceliklendirilmemiş fikirleri `backlog.md`ye yaz; somutlaşınca `task.md`ye taşı.
+## Rules
 
-## Çalışma Dosyaları
-
-| Dosya | Amaç |
-|---|---|
-| `ARCHITECTURE.md` | Mimari ve dizin yapısı referansı |
-| `TASK.md` | Aktif / devam eden / tamamlanan görevler |
-| `BACKLOG.md` | Önceliklendirilmemiş fikir ve teknik borç havuzu |
-| `SESSION.md` | Oturum günlüğü — her oturum sonunda güncellenir |
+- Suite boundary: file browsing/archives → iPad1Files; downloads → iPad1Downloader/FTPDownloader; PDF → iPad1PDFReader. Don't pull those responsibilities into the player.
+- Codec policy: H.264 software ≤ 854×480, AAC, MP3, MKV, AVI where compatible, native MP4/MOV/M4V via legacy MediaPlayer. **Rejected:** HEVC, AV1, VP9, 4K, HDR, 10-bit, H.264 720p software, heavy ASS rendering.
+- Exactly one demux reader; every queue bounded; avoid frame/packet copies; persistent SwrContext; renderer keeps only the latest frame.
+- Manual retain/release; `@autoreleasepool` in worker loops; iOS 5 APIs only.
+- A feature is "working" only after real-device playback — compiling is not enough. Record results in `SESSION.md` / `docs/ALPHA*.md`.
