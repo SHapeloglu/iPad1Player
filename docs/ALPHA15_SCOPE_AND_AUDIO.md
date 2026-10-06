@@ -1,64 +1,64 @@
-# Alpha15 — Suite Scope Enforcement + iPad 1 Audio Foundation
+# Alpha15 — Uygulama Ailesi Kapsam Denetimi + iPad 1 Ses Temeli
 
-## Mandatory suite filter
+## Zorunlu uygulama ailesi filtresi
 
-iPad1Player owns only media playback responsibilities.
+iPad1Player yalnızca medya oynatma sorumluluklarına sahiptir.
 
 ### iPad1Player
 - demux
-- audio/video decode
-- audio output
-- renderer
-- A/V sync
-- seek/resume
-- playback controls
-- subtitles
-- audio/subtitle track selection
-- chapters/media info
-- playback diagnostics
+- ses/video çözme
+- ses çıkışı
+- görüntüleyici
+- A/V senkronizasyonu
+- ileri sarma/devam
+- oynatma kontrolleri
+- altyazılar
+- ses/altyazı izi seçimi
+- bölümler/medya bilgisi
+- oynatma tanılaması
 
 ### iPad1Files
-- directory browsing
-- file search/sort
-- rename/copy/move/delete
-- folder creation
-- archive/ZIP/RAR
-- generic file information and favorites
+- dizin gezinme
+- dosya arama/sıralama
+- yeniden adlandır/kopyala/taşı/sil
+- klasör oluşturma
+- arşiv/ZIP/RAR
+- genel dosya bilgisi ve favoriler
 
 ### iPad1PDFReader
-- PDF rendering
-- PDF page navigation
-- PDF text/read mode
-- document reading
-- PDF bookmarks
+- PDF görüntüleme
+- PDF sayfa gezinme
+- PDF metin/okuma modu
+- belge okuma
+- PDF yer imleri
 
 ### iPad1Downloader
-- HTTP/HTTPS/FTP download
-- download queue
-- resume/retry
-- persistent remote-file transfer
+- HTTP/HTTPS/FTP indirme
+- indirme kuyruğu
+- devam/yeniden deneme
+- kalıcı uzak dosya transferi
 
-Player must never grow these responsibilities merely because competitors bundle them.
+Player, rakipler bunları bir arada sunuyor diye asla bu sorumlulukları üstlenmemelidir.
 
-## Alpha15 Player-only work
+## Alpha15'te yalnız Player'a ait işler
 
-### Low-memory PCM foundation
-- fixed 256 KB PCM ring buffer
-- no unbounded decoded-audio queue
-- flush on stop/memory warning
-- selected-audio-track-only policy
+### Düşük bellekli PCM temeli
+- sabit 256 KB PCM halka tampon
+- sınırsız çözülmüş ses kuyruğu yok
+- durdurmada/bellek uyarısında temizleme
+- yalnızca seçilen ses izi politikası
 
-### Safe audio defaults
-- preferred stereo output
-- 44.1 kHz preferred baseline
-- AAC/MP3 are Tier 1
-- AC3/E-AC3 remain disabled by default until device testing
+### Güvenli ses varsayılanları
+- tercihen stereo çıkış
+- tercihen 44.1 kHz temel değer
+- AAC/MP3 1. seviye
+- AC3/E-AC3 cihaz testine kadar varsayılan olarak kapalı
 
-### Video policy
-- 480p software H.264 may be tested
-- 720p software H.264 is not a primary path
-- hardware/hybrid H.264 remains test-gated
+### Video politikası
+- 480p yazılımsal H.264 test edilebilir
+- 720p yazılımsal H.264 birincil yol değil
+- donanım/hibrit H.264 test kapısının arkasında kalıyor
 
-## Important
-Alpha15 does not claim real AAC/MP3 decoding or PCM device output yet.
-It provides the Player-owned low-memory runtime boundary required for that next step.
+## Önemli
+Alpha15 henüz gerçek AAC/MP3 çözme veya cihazda PCM çıkışı iddia etmiyor.
+Bir sonraki adım için gereken, Player'a ait düşük bellekli çalışma zamanı sınırını sağlıyor.

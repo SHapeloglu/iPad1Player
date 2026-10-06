@@ -1,47 +1,47 @@
-# Alpha13 — iPad 1 Robustness Pass
+# Alpha13 — iPad 1 Sağlamlık Aşaması
 
-Alpha13 adds only low-risk defensive features suitable for iPad 1.
+Alpha13 yalnızca iPad 1'e uygun, düşük riskli savunmacı özellikler ekler.
 
-## Added
+## Eklenenler
 
-### Media preflight
-Before FFmpeg/native parsing:
-- path must exist
-- file must not be empty
-- extension must be in the supported parse set
-- obviously unreasonable file size is rejected
+### Medya ön kontrolü
+FFmpeg/yerleşik ayrıştırmadan önce:
+- yol mevcut olmalı
+- dosya boş olmamalı
+- uzantı desteklenen ayrıştırma kümesinde olmalı
+- açıkça makul olmayan dosya boyutu reddedilir
 
-The 32 GiB file-size cap is a defensive sanity check only; the file is never loaded into RAM.
+32 GiB dosya boyutu sınırı yalnızca savunmacı bir makullük kontrolüdür; dosya asla RAM'e yüklenmez.
 
-### Parse result sanity checks
-Reject invalid metadata such as:
-- dimensions above 4096x4096
-- FPS above 120
-- audio sample rate above 192 kHz
-- more than 16 audio channels
-- negative values
+### Ayrıştırma sonucu makullük kontrolleri
+Şu gibi geçersiz metadata reddedilir:
+- 4096x4096'dan büyük boyutlar
+- 120'nin üzerinde FPS
+- 192 kHz'in üzerinde ses örnekleme hızı
+- 16'dan fazla ses kanalı
+- negatif değerler
 
-These are corruption-defense limits, not playback capability claims.
+Bunlar bozulmaya karşı savunma sınırlarıdır, oynatma yeteneği iddiası değildir.
 
-### Repeated parse/close harness
+### Tekrarlı ayrıştır/kapat düzeneği
 `IP1ParseStressTester`:
-- defaults to 10 iterations
-- hard caps at 25 iterations
-- uses a per-iteration autorelease pool
-- stops early after repeated failures
-- records elapsed time and failures
+- varsayılan 10 tekrar
+- kesin üst sınır 25 tekrar
+- her tekrarda ayrı autorelease pool
+- tekrarlanan hatalardan sonra erken durur
+- geçen süreyi ve hataları kaydeder
 
-This is intentionally lightweight for iPad 1.
+Bu düzenek iPad 1 için bilinçli olarak hafiftir.
 
-## Leak testing rule
+## Sızıntı testi kuralı
 
-The harness detects functional instability only. Actual memory-leak validation still requires observing process memory on a real device while repeated parse/close cycles run.
+Düzenek yalnızca işlevsel kararsızlığı tespit eder. Gerçek bellek sızıntısı doğrulaması, tekrarlı ayrıştır/kapat döngüleri çalışırken gerçek cihazda süreç belleğini izlemeyi gerektirir.
 
-## Still disabled
+## Hâlâ kapalı olanlar
 
-- H.264 decode
-- AAC/MP3 decode
-- renderer
-- PCM output
-- hardware decode
-- background indexing
+- H.264 çözme
+- AAC/MP3 çözme
+- görüntüleyici
+- PCM çıkışı
+- donanım çözme
+- arka plan dizinleme

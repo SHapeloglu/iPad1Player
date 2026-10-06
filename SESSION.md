@@ -1,31 +1,31 @@
-# Development Session
+# Geliştirme Oturumu
 
-## Session: Working FFmpeg Video Playback on Real iPad 1
+## Oturum: Gerçek iPad 1'de çalışan FFmpeg video oynatma
 
-This session converted the existing FFmpeg audio runtime into a functioning audio/video MKV playback pipeline on a real iPad 1.
+Bu oturumda mevcut FFmpeg ses çalışma zamanı, gerçek bir iPad 1'de çalışan ses/video MKV oynatma hattına dönüştürüldü.
 
-## Starting State
+## Başlangıç durumu
 
-The project already had:
+Projede zaten şunlar vardı:
 
-- FFmpeg 4.4 armv7 static libraries
-- MKV parsing
-- AAC/MP3 audio decode
+- FFmpeg 4.4 armv7 statik kütüphaneleri
+- MKV ayrıştırma
+- AAC/MP3 ses çözme
 - swresample
-- AudioQueue output
-- working audible MKV audio
+- AudioQueue çıkışı
+- duyulabilir çalışan MKV sesi
 
-Video had no renderer.
+Video için görüntüleyici yoktu.
 
-The original movie used for initial testing was:
+İlk testte kullanılan film şuydu:
 
 - HEVC
 - 1280x720
 - AAC
 
-HEVC/720p is outside project scope.
+HEVC/720p proje kapsamı dışında.
 
-A dedicated test file was therefore prepared:
+Bu yüzden özel bir test dosyası hazırlandı:
 
 - H.264 Main
 - 854x480
@@ -34,120 +34,118 @@ A dedicated test file was therefore prepared:
 - 44.1 kHz stereo
 - MKV
 
-## H.264 Decode Verification
+## H.264 çözme doğrulaması
 
-A diagnostic H.264 decoder was added.
+Tanılama amaçlı bir H.264 çözücü eklendi.
 
-Real-device result demonstrated decoded frames such as:
+Gerçek cihaz sonucu şu tür çözülmüş kareler gösterdi:
 
     Video 75 frame 854x480
 
-This proved H.264 software decode worked on iPad 1.
+Bu, iPad 1'de H.264 yazılımsal çözmenin çalıştığını kanıtladı.
 
-## OpenGL ES 2 Renderer
+## OpenGL ES 2 görüntüleyici
 
-Added:
+Eklenenler:
 
     IP1YUVRendererView.h
     IP1YUVRendererView.m
 
-Renderer:
+Görüntüleyici:
 
-- accepts YUV420P
-- copies Y/U/V planes safely
-- uploads three GL_LUMINANCE textures
-- converts YUV to RGB in shader
-- presents with CAEAGLLayer
+- YUV420P kabul eder
+- Y/U/V düzlemlerini güvenle kopyalar
+- üç GL_LUMINANCE dokusu yükler
+- shader'da YUV'u RGB'ye çevirir
+- CAEAGLLayer ile sunar
 
-Initial screen remained black.
+İlk başta ekran siyah kaldı.
 
-## AVFrame Lifetime Bug
+## AVFrame yaşam süresi hatası
 
-Decoded frame count increased but no YUV callback reached the renderer.
+Çözülen kare sayısı artıyordu ama görüntüleyiciye hiçbir YUV geri çağrısı ulaşmıyordu.
 
-Cause:
+Neden:
 
-The decoder exposed `_frame` after repeated `avcodec_receive_frame()` calls.
+Çözücü, tekrarlanan `avcodec_receive_frame()` çağrılarından sonra `_frame`'i dışarı veriyordu.
 
-The working AVFrame could be reused/unreferenced.
+Çalışma AVFrame'i yeniden kullanılabiliyor/referansı bırakılabiliyordu.
 
-Fix:
+Düzeltme:
 
-- introduced `_lastFrame`
+- `_lastFrame` eklendi
 - `av_frame_ref(_lastFrame, _frame)`
-- renderer reads from the retained frame
+- görüntüleyici tutulan kareden okuyor
 
-Result:
+Sonuç:
 
-Real video image appeared successfully on the physical iPad 1.
+Fiziksel iPad 1'de gerçek video görüntüsü başarıyla göründü.
 
-## Renderer Backpressure
+## Görüntüleyici geri basıncı
 
-Initial playback later showed freezes affecting both audio and video.
+İlk oynatmada daha sonra hem sesi hem videoyu etkileyen donmalar görüldü.
 
-Cause:
+Neden:
 
-- too many main-thread render requests
-- GL work while frame lock held
-- demux thread could be blocked
+- çok fazla ana iş parçacığı görüntüleme isteği
+- kare kilidi tutulurken GL işi yapılması
+- demux iş parçacığının bloklanabilmesi
 
-Fix:
+Düzeltme:
 
-- producer/render double-buffer
+- üretici/görüntüleme çift tamponu
 - `_drawScheduled`
-- only one outstanding UI render request
-- newest-frame-wins policy
-- release lock before OpenGL work
+- yalnızca bir bekleyen arayüz görüntüleme isteği
+- en yeni kare kazanır politikası
+- OpenGL işinden önce kilidi bırakma
 
-Result:
+Sonuç:
 
-Playback progressed much more reliably.
+Oynatma çok daha güvenilir ilerledi.
 
-## Texture Upload Optimization
+## Doku yükleme optimizasyonu
 
-Initial renderer used `glTexImage2D` for every frame.
+İlk görüntüleyici her karede `glTexImage2D` kullanıyordu.
 
-Changed to:
+Şuna değiştirildi:
 
-- `glTexImage2D` only for allocation/size change
-- `glTexSubImage2D` for normal frame updates
+- yalnızca ayırma/boyut değişiminde `glTexImage2D`
+- normal kare güncellemelerinde `glTexSubImage2D`
 
-This reduced unnecessary texture recreation, although it did not alone remove all micro-stutter.
+Bu gereksiz doku yeniden oluşturmayı azalttı, ancak tek başına tüm mikro takılmaları gidermedi.
 
-## Persistent SwrContext
+## Kalıcı SwrContext
 
-Audio decoder previously performed:
+Ses çözücü önceden çözülen her ses karesi için şunları yapıyordu:
 
     swr_free
     swr_alloc_set_opts
     swr_init
 
-for every decoded audio frame.
+Kalıcı SwrContext'e geçildi.
 
-Changed to persistent SwrContext.
+Bağlam yalnızca şu durumlarda yeniden oluşturuluyor:
 
-The context is rebuilt only when:
+- giriş kanal düzeni değişince
+- giriş örnek formatı değişince
+- giriş örnekleme hızı değişince
+- çıkış düzeni/hızı/kanalları değişince
 
-- input layout changes
-- input sample format changes
-- input rate changes
-- output layout/rate/channels change
+Bu doğru bir optimizasyondu ama kalan takılmaların ana nedeni değildi.
 
-This was correct optimization but was not the main remaining stutter cause.
+## Ayrı video çözme işçisi
 
-## Separate Video Decode Worker
+Asıl performans sorunu mimariydi.
 
-The important performance problem was architectural.
-
-Previously:
+Önceden:
 
     av_read_frame
       -> H264 decode
       -> AAC decode
 
-Video decode latency delayed audio packet processing.
+Video çözme gecikmesi ses paketi işlemeyi geciktiriyordu.
 
-Implemented:
+Yapılan:
 
     single av_read_frame
           |
@@ -161,39 +159,39 @@ Implemented:
                     v
                H264 decode
 
-Result:
+Sonuç:
 
-Micro-freezes disappeared.
+Mikro donmalar ortadan kalktı.
 
-## H.264 Packet Corruption
+## H.264 paket bozulması
 
-Initial worker queue was small and dropped compressed H.264 packets when full.
+İlk işçi kuyruğu küçüktü ve dolunca sıkıştırılmış H.264 paketlerini atıyordu.
 
-Playback became smooth but video showed severe corruption/blocking.
+Oynatma akıcı hale geldi ama videoda ciddi bozulma/bloklanma görüldü.
 
-Cause:
+Neden:
 
-Random compressed H.264 packet loss breaks inter-frame reference dependencies.
+Rastgele sıkıştırılmış H.264 paket kaybı, kareler arası referans bağımlılıklarını bozar.
 
-Fix:
+Düzeltme:
 
-- queue increased to 32 packets
-- 4 MB compressed byte bound
-- arbitrary H.264 packet dropping removed
-- brief retry/yield when queue is full
+- kuyruk 32 pakete çıkarıldı
+- 4 MB sıkıştırılmış bayt sınırı
+- keyfi H.264 paket atma kaldırıldı
+- kuyruk doluyken kısa yeniden deneme/bekleme
 
-Result:
+Sonuç:
 
-Real-device test:
+Gerçek cihaz testi:
 
-- smooth playback
-- clean image
-- audio continues correctly
-- no earlier micro-freezes
+- akıcı oynatma
+- temiz görüntü
+- ses doğru şekilde devam ediyor
+- önceki mikro donmalar yok
 
-## Current Verified Milestone
+## Güncel doğrulanmış kilometre taşı
 
-The following pipeline now works on a real iPad 1:
+Aşağıdaki hat artık gerçek bir iPad 1'de çalışıyor:
 
     MKV
       |
@@ -213,15 +211,15 @@ The following pipeline now works on a real iPad 1:
                |
             display
 
-## Next Development Area
+## Sıradaki geliştirme alanı
 
-Do not immediately add unrelated features.
+Hemen ilgisiz özellikler ekleme.
 
-Next priority:
+Sıradaki öncelik:
 
-A/V synchronization using:
+Şunlarla A/V senkronizasyonu:
 
 - video PTS
-- audio master clock
-- frame scheduling
-- late-frame handling
+- ses ana saati
+- kare zamanlaması
+- geç kare işleme

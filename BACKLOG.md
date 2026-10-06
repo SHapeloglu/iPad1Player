@@ -1,105 +1,105 @@
-# iPad1Player Backlog
+# iPad1Player İş Havuzu
 
-## P0 — Playback Correctness
+## P0 — Oynatma doğruluğu
 
-- [ ] Video PTS extraction
-- [ ] Audio-master A/V synchronization
-- [ ] Late decoded-frame drop policy
-- [ ] Decoder flush at EOF
-- [ ] Clean playback-complete event
-- [ ] Pause/resume lifecycle validation
-- [ ] FFmpeg seek implementation
-- [ ] Audio/video decoder flush after seek
-- [ ] Packet queue flush after seek
+- [ ] Video PTS çıkarma
+- [ ] Ses ana saatli A/V senkronizasyonu
+- [ ] Geç kalan çözülmüş kareyi atma politikası
+- [ ] EOF'ta çözücü temizleme
+- [ ] Temiz "oynatma tamamlandı" olayı
+- [ ] Duraklat/devam yaşam döngüsü doğrulaması
+- [ ] FFmpeg ileri sarma uygulaması
+- [ ] İleri sarma sonrası ses/video çözücü temizleme
+- [ ] İleri sarma sonrası paket kuyruğu temizleme
 
-## P1 — Stability
+## P1 — Kararlılık
 
-- [ ] Make PCM ring buffer fully thread-safe
-- [ ] Remove AudioQueue callback KVC access
-- [ ] Propagate AudioQueueStart errors
-- [ ] Verify video-worker shutdown race safety
-- [ ] Verify repeated open/close playback
-- [ ] Verify repeated MKV changes without restarting app
-- [ ] Memory-warning behavior
-- [ ] 10-minute real-device playback test
-- [ ] 30-minute real-device playback test
-- [ ] full-movie playback test
+- [ ] PCM halka tamponunu tam iş parçacığı güvenli yap
+- [ ] AudioQueue geri çağrısındaki KVC erişimini kaldır
+- [ ] AudioQueueStart hatalarını yukarı ilet
+- [ ] Video işçisi kapanışındaki yarış durumu güvenliğini doğrula
+- [ ] Tekrarlı aç/kapat oynatmayı doğrula
+- [ ] Uygulamayı yeniden başlatmadan tekrarlı MKV değişimini doğrula
+- [ ] Bellek uyarısı davranışı
+- [ ] 10 dakikalık gerçek cihaz oynatma testi
+- [ ] 30 dakikalık gerçek cihaz oynatma testi
+- [ ] Tam film oynatma testi
 
 ## P1 — Video
 
-- [ ] Correct aspect-fit geometry
-- [ ] Aspect-fill
-- [ ] renderer resize/orientation handling
-- [ ] frame timing diagnostics
-- [ ] decoded-frame drop statistics
-- [ ] packet queue statistics
-- [ ] OpenGL error diagnostics
-- [ ] YUV color-range handling if needed
+- [ ] Doğru en-boy sığdırma geometrisi
+- [ ] En-boy doldurma
+- [ ] Görüntüleyici yeniden boyutlandırma/yön değişimi
+- [ ] Kare zamanlama tanılaması
+- [ ] Atılan kare istatistikleri
+- [ ] Paket kuyruğu istatistikleri
+- [ ] OpenGL hata tanılaması
+- [ ] Gerekirse YUV renk aralığı işleme
 
-## P1 — Audio
+## P1 — Ses
 
-- [ ] True AudioQueue presentation clock
-- [ ] Audio underrun diagnostics
-- [ ] Audio delay control in FFmpeg runtime
-- [ ] multiple embedded audio-track switching
-- [ ] MP3 runtime validation
-- [ ] sample-rate conversion validation
+- [ ] Gerçek AudioQueue sunum saati
+- [ ] Ses tampon boşalması (underrun) tanılaması
+- [ ] FFmpeg çalışma zamanında ses gecikmesi ayarı
+- [ ] Birden fazla gömülü ses izi arasında geçiş
+- [ ] MP3 çalışma zamanı doğrulaması
+- [ ] Örnekleme hızı dönüşümü doğrulaması
 
-## P2 — Subtitles
+## P2 — Altyazılar
 
-- [ ] Integrate existing SRT parser with FFmpeg playback clock
-- [ ] subtitle delay
-- [ ] subtitle enable/disable
-- [ ] embedded subtitle discovery
-- [ ] embedded subtitle selection
-- [ ] memory-safe subtitle indexing
+- [ ] Mevcut SRT ayrıştırıcıyı FFmpeg oynatma saatiyle bütünleştir
+- [ ] Altyazı gecikmesi
+- [ ] Altyazı aç/kapat
+- [ ] Gömülü altyazı bulma
+- [ ] Gömülü altyazı seçimi
+- [ ] Bellek güvenli altyazı dizinleme
 
-Heavy ASS rendering is not a project target.
+Ağır ASS görüntüleme proje hedefi değildir.
 
-## P2 — Playback UX
+## P2 — Oynatma deneyimi
 
-- [ ] seek bar connected to FFmpeg runtime
-- [ ] resume position
-- [ ] chapter navigation
-- [ ] playback information overlay
-- [ ] audio-track picker
-- [ ] subtitle-track picker
-- [ ] playback diagnostics screen
-- [ ] clean temporary GL diagnostic labels
+- [ ] FFmpeg çalışma zamanına bağlı ilerleme çubuğu
+- [ ] Devam konumu
+- [ ] Bölüm gezinme
+- [ ] Oynatma bilgisi katmanı
+- [ ] Ses izi seçici
+- [ ] Altyazı izi seçici
+- [ ] Oynatma tanılama ekranı
+- [ ] Geçici GL tanılama etiketlerini temizle
 
-## P2 — Architecture Cleanup
+## P2 — Mimari temizlik
 
-- [ ] Move video packet wrapper to dedicated source file if needed
-- [ ] clarify IP1FFmpegAdapter responsibility
-- [ ] replace remaining experimental bypasses
-- [ ] update stale Alpha14/Alpha18 comments
-- [ ] define production FFmpeg playback interface
-- [ ] review stop/dealloc ownership under MRC
+- [ ] Gerekirse video paket sarmalayıcısını ayrı kaynak dosyaya taşı
+- [ ] IP1FFmpegAdapter sorumluluğunu netleştir
+- [ ] Kalan deneysel baypasları değiştir
+- [ ] Eskimiş Alpha14/Alpha18 yorumlarını güncelle
+- [ ] Üretim düzeyinde FFmpeg oynatma arayüzünü tanımla
+- [ ] MRC altında stop/dealloc sahipliğini gözden geçir
 
-## P3 — Compatibility Testing
+## P3 — Uyumluluk testleri
 
-Real-device test matrix:
+Gerçek cihaz test matrisi:
 
 - [x] H.264 854x480 + AAC MKV
 - [ ] H.264 640x360 + AAC MKV
 - [ ] H.264 854x480 + MP3 MKV
-- [ ] AVI compatible video/audio
-- [ ] variable frame-rate H.264
-- [ ] different H.264 profiles within policy
-- [ ] malformed media handling
+- [ ] Uyumlu AVI video/ses
+- [ ] Değişken kare hızlı H.264
+- [ ] Politika içindeki farklı H.264 profilleri
+- [ ] Bozuk medya işleme
 
-## Explicitly Out of Scope
+## Açıkça kapsam dışı
 
-Do not add:
+Ekleme:
 
 - HEVC / H.265
 - AV1
 - VP9
 - 4K
 - HDR
-- 10-bit playback
-- cloud file manager
-- downloader features
-- PDF reader
-- general file-manager functionality
-- heavy ASS effects
+- 10 bit oynatma
+- bulut dosya yöneticisi
+- indirici özellikleri
+- PDF okuyucu
+- genel dosya yöneticisi işlevleri
+- ağır ASS efektleri

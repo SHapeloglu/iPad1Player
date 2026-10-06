@@ -1,81 +1,81 @@
-# MKV / FFmpeg Backend Plan — alpha4
+# MKV / FFmpeg Altyapı Planı — alpha4
 
-## Goal
+## Hedef
 
-Make iPad1Player's first real MKV backend without duplicating responsibilities from iPad1Files, iPad1Downloader or iPad1PDFReader.
+iPad1Files, iPad1Downloader veya iPad1PDFReader'ın sorumluluklarını çoğaltmadan iPad1Player'ın ilk gerçek MKV altyapısını yapmak.
 
-Target:
+Hedef:
 - iPad 1
 - iOS 5.1.1
 - armv7
 - ~256 MB RAM
 - non-ARC/MRC
-- legacy iPhoneOS 6.1 SDK
+- eski iPhoneOS 6.1 SDK
 
-## Pipeline
+## Hat
 
-MKV -> FFmpeg demux -> bounded packet queues -> video/audio decoders -> A/V clock -> renderer/audio output
+MKV -> FFmpeg demux -> sınırlı paket kuyrukları -> video/ses çözücüler -> A/V saati -> görüntüleyici/ses çıkışı
 
 ### Video
-Priority:
-1. H.264 stream detection.
-2. Legacy hardware-assisted path only when verified on a real iPad 1.
-3. Software decode fallback.
-4. Drop late frames rather than allowing an unbounded queue.
+Öncelik:
+1. H.264 akışını algılama.
+2. Eski donanım destekli yol yalnızca gerçek bir iPad 1'de doğrulandığında.
+3. Yazılımsal çözmeye geri dönüş.
+4. Sınırsız kuyruğa izin vermek yerine geç kalan kareleri atma.
 
-### Audio
-Initial codecs:
+### Ses
+İlk codec'ler:
 - AAC
 - MP3
 
-Audio becomes the preferred master clock when available.
+Ses mevcutsa tercih edilen ana saat olur.
 
-### Synchronization
-- Audio clock is master when audio is active.
-- Video frame too early -> short wait.
-- Video frame too late -> drop.
-- Subtitle clock follows presentation time plus user subtitle offset.
-- Audio delay is represented in backend API and is applied in the audio clock/output path once FFmpeg audio is active.
+### Senkronizasyon
+- Ses aktifse ana saat sestir.
+- Video karesi çok erken -> kısa bekleme.
+- Video karesi çok geç -> atma.
+- Altyazı saati sunum zamanı + kullanıcının altyazı kaydırmasını izler.
+- Ses gecikmesi altyapı API'sinde temsil edilir ve FFmpeg sesi aktif olunca ses saati/çıkış yolunda uygulanır.
 
-## Low-memory limits
+## Düşük bellek sınırları
 
-The queue implementation is intentionally bounded.
+Kuyruk uygulaması bilinçli olarak sınırlıdır.
 
-Recommended starting budget:
-- compressed video packets: <= 4 MB
-- compressed audio packets: <= 1 MB
-- decoded video frames: <= 3 frames
-- decoded audio: short rolling buffer only
+Önerilen başlangıç bütçesi:
+- sıkıştırılmış video paketleri: <= 4 MB
+- sıkıştırılmış ses paketleri: <= 1 MB
+- çözülmüş video kareleri: <= 3 kare
+- çözülmüş ses: yalnızca kısa döner tampon
 
-Never cache the entire MKV file or an unbounded subtitle/frame history.
+MKV dosyasının tamamını veya sınırsız altyazı/kare geçmişini asla önbelleğe alma.
 
-## Track model
+## İz modeli
 
-`IP1MediaTrack` represents:
+`IP1MediaTrack` şunları temsil eder:
 - video
-- audio
-- subtitle
+- ses
+- altyazı
 
-The backend contract already supports:
-- multiple audio tracks
-- multiple embedded subtitle tracks
-- selected audio/subtitle track
-- audio delay
-- subtitle delay
-- decode mode
+Altyapı sözleşmesi zaten şunları destekliyor:
+- birden fazla ses izi
+- birden fazla gömülü altyazı izi
+- seçili ses/altyazı izi
+- ses gecikmesi
+- altyazı gecikmesi
+- çözme modu
 
-## Build flags
+## Derleme bayrakları
 
-The source stays buildable without FFmpeg.
+Kaynak FFmpeg olmadan da derlenebilir kalır.
 
-Enable adapter code only when legacy armv7 libraries are actually linked:
+Adaptör kodunu yalnızca eski armv7 kütüphaneleri gerçekten bağlandığında aç:
 
 ```make
 iPad1Player_CFLAGS += -DIP1_FFMPEG_BACKEND
 ```
 
-Do not enable `IP1_LEGACY_H264_HW` until a real iPad 1 test confirms the hardware path.
+Gerçek bir iPad 1 testi donanım yolunu doğrulamadan `IP1_LEGACY_H264_HW`'yi açma.
 
-## Important compatibility rule
+## Önemli uyumluluk kuralı
 
-Do not assume modern VideoToolbox APIs exist on iOS 5.1.1. Hardware-assisted H.264 must be based on APIs actually available on the target device/SDK and proven with an on-device test.
+iOS 5.1.1'de güncel VideoToolbox API'lerinin var olduğunu varsayma. Donanım destekli H.264, hedef cihazda/SDK'da gerçekten bulunan API'lere dayanmalı ve cihaz üzerinde testle kanıtlanmalıdır.

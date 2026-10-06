@@ -1,23 +1,23 @@
-# Alpha6 sector-alignment additions
+# Alpha6 sektörle hizalama eklemeleri
 
-## Chapters
-A lightweight `IP1Chapter` model now exists. FFmpeg extraction is intentionally deferred until the backend is linked.
+## Bölümler
+Artık hafif bir `IP1Chapter` modeli var. FFmpeg ile çıkarma, altyapı bağlanana kadar bilinçli olarak ertelendi.
 
-Expected chapter fields:
-- start time
-- title
+Beklenen bölüm alanları:
+- başlangıç zamanı
+- başlık
 
-## Sleep timer
-Player API supports minute-based sleep timer. Recommended UI presets:
-- Off
-- 15 min
-- 30 min
-- 45 min
-- 60 min
-- End of media (future backend-aware option)
+## Uyku zamanlayıcısı
+Player API'si dakika tabanlı uyku zamanlayıcısını destekler. Önerilen arayüz ön ayarları:
+- Kapalı
+- 15 dk
+- 30 dk
+- 45 dk
+- 60 dk
+- Medya sonunda (gelecekte altyapıya duyarlı seçenek)
 
-## Playback speed
-Target presets:
+## Oynatma hızı
+Hedef ön ayarlar:
 - 0.5x
 - 0.75x
 - 1.0x
@@ -25,25 +25,25 @@ Target presets:
 - 1.5x
 - 2.0x
 
-Higher speeds are intentionally not prioritized on iPad 1.
+iPad 1'de daha yüksek hızlara bilinçli olarak öncelik verilmez.
 
-## Detailed media info
-`IP1MediaInfo` tracks:
-- container
+## Ayrıntılı medya bilgisi
+`IP1MediaInfo` şunları tutar:
+- konteyner
 - video codec
-- audio codec
-- dimensions
+- ses codec
+- boyutlar
 - fps
-- bitrate
-- audio sample rate
-- channels
-- duration
+- bit hızı
+- ses örnekleme hızı
+- kanallar
+- süre
 
-The native backend can fill what iOS 5 exposes. The FFmpeg backend will fill the full set once linked.
+Yerleşik altyapı iOS 5'in açtığı kadarını doldurabilir. FFmpeg altyapısı bağlandığında tamamını dolduracak.
 
-## Still backend-gated
-- chapter extraction from MKV/AVI
-- embedded subtitle enumeration
-- multiple audio track enumeration
-- audio delay application
-- codec/fps/bitrate extraction from FFmpeg
+## Hâlâ altyapıya bağlı olanlar
+- MKV/AVI'den bölüm çıkarma
+- gömülü altyazıları listeleme
+- birden fazla ses izini listeleme
+- ses gecikmesini uygulama
+- FFmpeg'den codec/fps/bit hızı çıkarma

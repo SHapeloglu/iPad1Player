@@ -1,233 +1,233 @@
-# iPad 1 Compatibility Gate
+# iPad 1 Uyumluluk Kapısı
 
-Target:
+Hedef:
 - iPad 1 / A4
 - iOS 5.1.1
 - armv7
 - ~256 MB RAM
 - Objective-C / UIKit
 - non-ARC/MRC
-- Theos / legacy iPhoneOS 6.1 SDK
+- Theos / eski iPhoneOS 6.1 SDK
 
-Every new feature must pass these checks before it is considered complete:
+Her yeni özellik tamamlanmış sayılmadan önce şu kontrollerden geçmelidir:
 
-1. API exists on iOS 5.1.1.
-2. armv7 build succeeds.
-3. MRC ownership/lifecycle is safe.
-4. Peak memory is bounded.
-5. Continuous CPU cost is acceptable.
-6. It does not add unnecessary work to the decode/render loop.
-7. Per-frame allocations are minimized.
-8. Disk I/O is minimized.
-9. Real iPad 1 test status is recorded.
-10. A lighter implementation was considered.
+1. API iOS 5.1.1'de mevcut.
+2. armv7 derlemesi başarılı.
+3. MRC sahipliği/yaşam döngüsü güvenli.
+4. Tepe bellek kullanımı sınırlı.
+5. Sürekli CPU maliyeti kabul edilebilir.
+6. Çözme/görüntüleme döngüsüne gereksiz iş eklemiyor.
+7. Kare başına bellek ayırmalar en aza indirilmiş.
+8. Disk G/Ç en aza indirilmiş.
+9. Gerçek iPad 1 test durumu kaydedilmiş.
+10. Daha hafif bir uygulama düşünülmüş.
 
-## Status meanings
+## Durum anlamları
 
 ### IPAD1_SAFE
-Architecture/API/cost is suitable for iPad 1 and does not require unusual device-specific performance assumptions.
+Mimari/API/maliyet iPad 1'e uygun ve olağan dışı cihaza özel performans varsayımları gerektirmiyor.
 
 ### IPAD1_TEST_REQUIRED
-The feature is allowed in source but cannot be claimed as proven until tested on the real device.
+Özelliğe kaynakta izin verilir ama gerçek cihazda test edilmeden kanıtlanmış denemez.
 
 ### IPAD1_REJECTED
-The feature is intentionally excluded for the iPad 1 target.
+Özellik iPad 1 hedefi için bilinçli olarak dışarıda bırakılmıştır.
 
-## Current matrix
+## Güncel matris
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| External SRT | IPAD1_SAFE |
-| Subtitle delay/size/position | IPAD1_SAFE |
-| Resume | IPAD1_SAFE |
-| Chapters model | IPAD1_SAFE |
-| Sleep timer | IPAD1_SAFE |
-| Gesture seek | IPAD1_SAFE |
+| Harici SRT | IPAD1_SAFE |
+| Altyazı gecikmesi/boyutu/konumu | IPAD1_SAFE |
+| Kaldığı yerden devam | IPAD1_SAFE |
+| Bölüm modeli | IPAD1_SAFE |
+| Uyku zamanlayıcısı | IPAD1_SAFE |
+| Hareketle sarma | IPAD1_SAFE |
 | MKV demux | IPAD1_SAFE |
-| Bounded packet queues | IPAD1_SAFE |
-| 2.0x playback | IPAD1_TEST_REQUIRED |
-| Volume gesture | IPAD1_TEST_REQUIRED |
-| Basic ASS/SSA | IPAD1_TEST_REQUIRED |
+| Sınırlı paket kuyrukları | IPAD1_SAFE |
+| 2.0x oynatma | IPAD1_TEST_REQUIRED |
+| Ses düzeyi hareketi | IPAD1_TEST_REQUIRED |
+| Temel ASS/SSA | IPAD1_TEST_REQUIRED |
 | AC3/E-AC3 | IPAD1_TEST_REQUIRED |
-| 720p legacy hardware H.264 | IPAD1_TEST_REQUIRED |
-| 480p software H.264 | IPAD1_TEST_REQUIRED |
-| 720p software H.264 as primary path | IPAD1_REJECTED |
+| 720p eski donanım H.264 | IPAD1_TEST_REQUIRED |
+| 480p yazılımsal H.264 | IPAD1_TEST_REQUIRED |
+| Birincil yol olarak 720p yazılımsal H.264 | IPAD1_REJECTED |
 | HEVC/H.265 | IPAD1_REJECTED |
 | AV1 | IPAD1_REJECTED |
 | VP9 | IPAD1_REJECTED |
 | 4K | IPAD1_REJECTED |
 | HDR | IPAD1_REJECTED |
-| Modern 10-bit video pipeline | IPAD1_REJECTED |
+| Güncel 10 bit video hattı | IPAD1_REJECTED |
 
-## alpha7 optimizations
+## alpha7 optimizasyonları
 
-### Subtitle
-Previous behavior could scan every SRT cue every 100 ms.
+### Altyazı
+Önceki davranış her 100 ms'de tüm SRT satırlarını tarayabiliyordu.
 
-New behavior:
-- normal playback: checks current/next cue only.
-- seek/jump: binary search.
+Yeni davranış:
+- normal oynatma: yalnızca güncel/sonraki satıra bakar.
+- sarma/atlama: ikili arama.
 
-### Resume
-Previous:
-- save every 5 seconds
-- explicit synchronize
+### Kaldığı yerden devam
+Önceki:
+- her 5 saniyede kaydetme
+- açık synchronize
 
-New:
-- save every 30 seconds
-- save on pause/stop/background/termination
-- no forced synchronize
+Yeni:
+- her 30 saniyede kaydetme
+- duraklatma/durdurma/arka plan/kapanışta kaydetme
+- zorunlu synchronize yok
 
-### Timers
-Subtitle, resume and sleep timers all pass through one cleanup path.
+### Zamanlayıcılar
+Altyazı, devam ve uyku zamanlayıcılarının hepsi tek bir temizlik yolundan geçer.
 
-### Brightness
-Player stores the original brightness and restores it when leaving playback if the gesture changed it.
+### Parlaklık
+Player orijinal parlaklığı saklar ve hareket parlaklığı değiştirdiyse oynatmadan çıkarken geri yükler.
 
-### Volume
-The gesture no longer controls `applicationMusicPlayer`; it targets the movie playback object. This remains `IPAD1_TEST_REQUIRED`.
+### Ses düzeyi
+Hareket artık `applicationMusicPlayer`'ı değil film oynatma nesnesini kontrol eder. Bu `IPAD1_TEST_REQUIRED` olarak kalır.
 
-## Hardware decode rule
+## Donanım çözme kuralı
 
-Never define or advertise legacy H.264 hardware decode support until a real iPad 1 test proves it.
+Gerçek bir iPad 1 testi kanıtlamadan eski H.264 donanım çözme desteğini asla tanımlama veya duyurma.
 
-Modern VideoToolbox assumptions are not accepted for iOS 5.1.1.
+iOS 5.1.1 için güncel VideoToolbox varsayımları kabul edilmez.
 
 
-## Alpha9 parse-only decisions
+## Alpha9 yalnız ayrıştırma kararları
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| Parse-only FFmpeg metadata | IPAD1_TEST_REQUIRED |
-| Track enumeration | IPAD1_TEST_REQUIRED |
-| Chapter extraction | IPAD1_TEST_REQUIRED |
-| Detailed media info extraction | IPAD1_TEST_REQUIRED |
-| Parse-time packet buffering | IPAD1_REJECTED |
-| Parse-time frame decode | IPAD1_REJECTED |
+| Yalnız ayrıştıran FFmpeg metadata | IPAD1_TEST_REQUIRED |
+| İz listeleme | IPAD1_TEST_REQUIRED |
+| Bölüm çıkarma | IPAD1_TEST_REQUIRED |
+| Ayrıntılı medya bilgisi çıkarma | IPAD1_TEST_REQUIRED |
+| Ayrıştırma sırasında paket tamponlama | IPAD1_REJECTED |
+| Ayrıştırma sırasında kare çözme | IPAD1_REJECTED |
 
-The parser must release FFmpeg contexts immediately after metadata extraction.
+Ayrıştırıcı FFmpeg bağlamlarını metadata çıkarıldıktan hemen sonra serbest bırakmalıdır.
 
 
-## Alpha10 hardening decisions
+## Alpha10 sıkılaştırma kararları
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| Memory warning purge | IPAD1_SAFE |
-| Conservative memory budgets | IPAD1_SAFE |
-| Safe rate profile through 1.5x | IPAD1_SAFE |
-| 2.0x playback | IPAD1_TEST_REQUIRED |
-| Parse-only FFmpeg integration | IPAD1_TEST_REQUIRED |
+| Bellek uyarısında temizleme | IPAD1_SAFE |
+| Temkinli bellek bütçeleri | IPAD1_SAFE |
+| 1.5x'e kadar güvenli hız profili | IPAD1_SAFE |
+| 2.0x oynatma | IPAD1_TEST_REQUIRED |
+| Yalnız ayrıştıran FFmpeg entegrasyonu | IPAD1_TEST_REQUIRED |
 
-Alpha10 prioritizes stability over feature count.
+Alpha10 kararlılığı özellik sayısının önünde tutar.
 
 
-## Alpha11 parse runtime gate
+## Alpha11 ayrıştırma çalışma zamanı kapısı
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| Parse context close immediately after metadata | IPAD1_SAFE |
-| Metadata/track/chapter defensive limits | IPAD1_SAFE |
-| Real libavformat parse | IPAD1_TEST_REQUIRED |
-| Stream enumeration | IPAD1_TEST_REQUIRED |
-| Chapter extraction | IPAD1_TEST_REQUIRED |
-| Detailed media info extraction | IPAD1_TEST_REQUIRED |
+| Metadata sonrası ayrıştırma bağlamını hemen kapatma | IPAD1_SAFE |
+| Metadata/iz/bölüm savunmacı sınırları | IPAD1_SAFE |
+| Gerçek libavformat ayrıştırma | IPAD1_TEST_REQUIRED |
+| Akış listeleme | IPAD1_TEST_REQUIRED |
+| Bölüm çıkarma | IPAD1_TEST_REQUIRED |
+| Ayrıntılı medya bilgisi çıkarma | IPAD1_TEST_REQUIRED |
 
-No decode capability changes in alpha11.
+alpha11'de çözme yeteneği değişikliği yok.
 
 
-## Alpha12 pre-integration gate
+## Alpha12 entegrasyon öncesi kapı
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| FFmpeg build capability check | IPAD1_SAFE |
-| Parse result validator | IPAD1_SAFE |
-| Parse fallback policy | IPAD1_SAFE |
-| Real armv7 FFmpeg link | IPAD1_TEST_REQUIRED |
-| Release enablement of FFmpeg backend | IPAD1_TEST_REQUIRED |
+| FFmpeg derleme yeteneği kontrolü | IPAD1_SAFE |
+| Ayrıştırma sonucu doğrulayıcı | IPAD1_SAFE |
+| Ayrıştırma geri dönüş politikası | IPAD1_SAFE |
+| Gerçek armv7 FFmpeg bağlama | IPAD1_TEST_REQUIRED |
+| FFmpeg altyapısının sürümde açılması | IPAD1_TEST_REQUIRED |
 
-Decode/render remains unchanged.
+Çözme/görüntüleme değişmeden kalır.
 
 
-## Alpha13 robustness decisions
+## Alpha13 sağlamlık kararları
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| Media path/file preflight | IPAD1_SAFE |
-| Corrupt metadata sanity validation | IPAD1_SAFE |
-| 10-cycle parse/close stress harness | IPAD1_SAFE |
-| 25-cycle maximum test harness | IPAD1_SAFE |
-| Real memory-leak verdict | IPAD1_TEST_REQUIRED |
+| Medya yolu/dosya ön kontrolü | IPAD1_SAFE |
+| Bozuk metadata makullük doğrulaması | IPAD1_SAFE |
+| 10 döngülük ayrıştır/kapat yük düzeneği | IPAD1_SAFE |
+| En fazla 25 döngülük test düzeneği | IPAD1_SAFE |
+| Gerçek bellek sızıntısı kararı | IPAD1_TEST_REQUIRED |
 
-No codec/decode capability was enabled.
+Hiçbir codec/çözme yeteneği açılmadı.
 
 
-## Alpha14 real parse implementation
+## Alpha14 gerçek ayrıştırma uygulaması
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| libavformat parse source implementation | IPAD1_TEST_REQUIRED |
-| Stream enumeration implementation | IPAD1_TEST_REQUIRED |
-| Chapter extraction implementation | IPAD1_TEST_REQUIRED |
-| Media-info mapping implementation | IPAD1_TEST_REQUIRED |
-| Parse-time decoder opening | IPAD1_REJECTED |
-| Parse-time packet buffering | IPAD1_REJECTED |
+| libavformat ayrıştırma kaynak uygulaması | IPAD1_TEST_REQUIRED |
+| Akış listeleme uygulaması | IPAD1_TEST_REQUIRED |
+| Bölüm çıkarma uygulaması | IPAD1_TEST_REQUIRED |
+| Medya bilgisi eşleme uygulaması | IPAD1_TEST_REQUIRED |
+| Ayrıştırma sırasında çözücü açma | IPAD1_REJECTED |
+| Ayrıştırma sırasında paket tamponlama | IPAD1_REJECTED |
 
-These move to SAFE only after an armv7 build and real iPad 1 runtime tests.
+Bunlar ancak armv7 derlemesi ve gerçek iPad 1 çalışma zamanı testlerinden sonra SAFE'e geçer.
 
 
-## Alpha15 Player-only compatibility decisions
+## Alpha15 yalnız Player'a ait uyumluluk kararları
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| Code-level suite scope gate | IPAD1_SAFE |
-| 256 KB bounded PCM ring buffer | IPAD1_SAFE |
-| Selected-audio-track-only decode policy | IPAD1_SAFE |
-| Stereo/44.1 kHz conservative output profile | IPAD1_SAFE |
-| AAC/MP3 real decode | IPAD1_TEST_REQUIRED |
-| 480p H.264 software decode | IPAD1_TEST_REQUIRED |
-| 720p software H.264 primary path | IPAD1_REJECTED |
-| PDF/file-manager/download features in Player | IPAD1_REJECTED |
+| Kod düzeyinde uygulama ailesi kapsam kapısı | IPAD1_SAFE |
+| 256 KB sınırlı PCM halka tampon | IPAD1_SAFE |
+| Yalnızca seçili ses izini çözme politikası | IPAD1_SAFE |
+| Stereo/44.1 kHz temkinli çıkış profili | IPAD1_SAFE |
+| Gerçek AAC/MP3 çözme | IPAD1_TEST_REQUIRED |
+| 480p H.264 yazılımsal çözme | IPAD1_TEST_REQUIRED |
+| 720p yazılımsal H.264 birincil yol | IPAD1_REJECTED |
+| Player'da PDF/dosya yöneticisi/indirme özellikleri | IPAD1_REJECTED |
 
 
-## Alpha16 MKV/H.264 policy
+## Alpha16 MKV/H.264 politikası
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| MKV demux | IPAD1_SAFE architecture / runtime test required |
-| H.264 360p software playback | IPAD1_TEST_REQUIRED |
-| H.264 480p software playback | IPAD1_TEST_REQUIRED |
-| H.264 720p software primary path | IPAD1_REJECTED |
-| H.264 720p verified legacy hardware/hybrid | IPAD1_TEST_REQUIRED |
-| Above-720p software playback | IPAD1_REJECTED |
+| MKV demux | IPAD1_SAFE mimari / çalışma zamanı testi gerekli |
+| H.264 360p yazılımsal oynatma | IPAD1_TEST_REQUIRED |
+| H.264 480p yazılımsal oynatma | IPAD1_TEST_REQUIRED |
+| H.264 720p yazılımsal birincil yol | IPAD1_REJECTED |
+| H.264 720p doğrulanmış eski donanım/hibrit | IPAD1_TEST_REQUIRED |
+| 720p üstü yazılımsal oynatma | IPAD1_REJECTED |
 
-MKV/H.264 playback is explicitly within iPad1Player scope.
+MKV/H.264 oynatma açıkça iPad1Player kapsamındadır.
 
 
-## Alpha17 audio runtime
+## Alpha17 ses çalışma zamanı
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| AudioQueue 3x16 KB output buffers | IPAD1_TEST_REQUIRED |
-| 256 KB PCM ring buffer | IPAD1_SAFE |
-| AAC decoder source | IPAD1_TEST_REQUIRED |
-| MP3 decoder source | IPAD1_TEST_REQUIRED |
-| Packed S16 PCM path | IPAD1_TEST_REQUIRED |
-| Non-S16 conversion via swresample | NOT ENABLED |
-| AC3/E-AC3 decode | NOT ENABLED |
+| AudioQueue 3x16 KB çıkış tamponları | IPAD1_TEST_REQUIRED |
+| 256 KB PCM halka tampon | IPAD1_SAFE |
+| AAC çözücü kaynağı | IPAD1_TEST_REQUIRED |
+| MP3 çözücü kaynağı | IPAD1_TEST_REQUIRED |
+| Paketlenmiş S16 PCM yolu | IPAD1_TEST_REQUIRED |
+| swresample ile S16 dışı dönüşüm | NOT ENABLED (açılmadı) |
+| AC3/E-AC3 çözme | NOT ENABLED (açılmadı) |
 
-All alpha17 work is within iPad1Player scope.
+alpha17'deki tüm işler iPad1Player kapsamındadır.
 
 
-## Alpha18 audio loop
+## Alpha18 ses döngüsü
 
-| Feature | Status |
+| Özellik | Durum |
 |---|---|
-| Selected-stream av_read_frame loop | IPAD1_TEST_REQUIRED |
-| Single demux thread | IPAD1_SAFE architecture |
-| 64 KB decode scratch buffer | IPAD1_SAFE |
-| PCM backpressure at 75% | IPAD1_SAFE |
-| Audio clock from accepted PCM bytes | IPAD1_TEST_REQUIRED |
-| Continuous AAC/MP3 playback | IPAD1_TEST_REQUIRED |
-| Video decode in this phase | NOT ENABLED |
+| Seçili akış av_read_frame döngüsü | IPAD1_TEST_REQUIRED |
+| Tek demux iş parçacığı | IPAD1_SAFE mimari |
+| 64 KB çözme karalama tamponu | IPAD1_SAFE |
+| %75'te PCM geri basıncı | IPAD1_SAFE |
+| Kabul edilen PCM baytlarından ses saati | IPAD1_TEST_REQUIRED |
+| Kesintisiz AAC/MP3 oynatma | IPAD1_TEST_REQUIRED |
+| Bu aşamada video çözme | NOT ENABLED (açılmadı) |
 
-All Alpha18 changes remain inside iPad1Player responsibility.
+Alpha18'deki tüm değişiklikler iPad1Player sorumluluğu içinde kalır.

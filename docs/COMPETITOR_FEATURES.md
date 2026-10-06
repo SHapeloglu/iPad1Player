@@ -1,56 +1,56 @@
-# Competitor-derived Player Feature Log
+# Rakiplerden Alınan Player Özellikleri Günlüğü
 
-This file records competitor-inspired features accepted for iPad1Player after the suite responsibility filter.
+Bu dosya, uygulama ailesi sorumluluk filtresinden geçtikten sonra iPad1Player için kabul edilen, rakiplerden esinlenen özellikleri kaydeder.
 
-## Implemented through alpha4
+## alpha4'e kadar yapılanlar
 
-- External SRT auto-match and language-suffixed sidecars.
-- Subtitle enable/disable.
-- Subtitle delay.
-- Subtitle font size and vertical position.
-- Manual subtitle encoding selection.
-- Resume playback.
-- +/-10 second gesture seek.
-- Detailed aspect ratio presets.
-- Playback speed.
-- A-B repeat.
-- Brightness gesture.
-- Volume gesture.
-- Playback control lock.
-- Basic media info.
+- Harici SRT otomatik eşleştirme ve dil ekli yan dosyalar.
+- Altyazı aç/kapat.
+- Altyazı gecikmesi.
+- Altyazı yazı boyutu ve dikey konumu.
+- Elle altyazı kodlaması seçimi.
+- Kaldığı yerden devam.
+- Hareketle +/-10 saniye sarma.
+- Ayrıntılı en-boy oranı ön ayarları.
+- Oynatma hızı.
+- A-B tekrar.
+- Parlaklık hareketi.
+- Ses düzeyi hareketi.
+- Oynatma kontrol kilidi.
+- Temel medya bilgisi.
 
-## Requires MKV backend
+## MKV altyapısı gerektirenler
 
-- MKV demux/playback.
-- Multiple audio tracks.
-- Embedded subtitle tracks.
-- ASS/SSA support.
-- Audio delay.
-- Hardware-assisted H.264 path.
-- Detailed codec/fps/bitrate information.
+- MKV demux/oynatma.
+- Birden fazla ses izi.
+- Gömülü altyazı izleri.
+- ASS/SSA desteği.
+- Ses gecikmesi.
+- Donanım destekli H.264 yolu.
+- Ayrıntılı codec/fps/bit hızı bilgisi.
 
-## Explicitly rejected from Player
+## Player'dan açıkça reddedilenler
 
-- File browser, rename, move, copy, delete, folders, archives -> iPad1Files.
-- Download queue / HTTP-FTP download management -> iPad1Downloader.
-- PDF view/read/bookmark -> iPad1PDFReader.
+- Dosya gezgini, yeniden adlandır, taşı, kopyala, sil, klasörler, arşivler -> iPad1Files.
+- İndirme kuyruğu / HTTP-FTP indirme yönetimi -> iPad1Downloader.
+- PDF görüntüleme/okuma/yer imi -> iPad1PDFReader.
 
 
-## Alpha4 backend work
+## Alpha4 altyapı çalışması
 
-Implemented as real architecture/code boundaries:
-- bounded packet queue
-- media track model
-- multi-audio selection contract
-- embedded-subtitle selection contract
-- audio delay contract
-- subtitle delay contract
-- decode-mode contract
-- media-info backend contract
-- FFmpeg optional-build hooks
+Gerçek mimari/kod sınırları olarak yapılanlar:
+- sınırlı paket kuyruğu
+- medya izi modeli
+- çoklu ses seçimi sözleşmesi
+- gömülü altyazı seçimi sözleşmesi
+- ses gecikmesi sözleşmesi
+- altyazı gecikmesi sözleşmesi
+- çözme modu sözleşmesi
+- medya bilgisi altyapı sözleşmesi
+- isteğe bağlı FFmpeg derleme kancaları
 
-Still requires actual vendor/runtime implementation:
-- FFmpeg demux/decode
-- AAC/MP3 decode from MKV
-- embedded subtitle extraction/rendering
-- verified legacy hardware H.264 path
+Hâlâ gerçek sağlayıcı/çalışma zamanı uygulaması gerektirenler:
+- FFmpeg demux/çözme
+- MKV'den AAC/MP3 çözme
+- gömülü altyazı çıkarma/görüntüleme
+- doğrulanmış eski donanım H.264 yolu

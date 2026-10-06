@@ -1,54 +1,52 @@
-# Alpha16 — iPad 1 MKV/H.264 Playback Policy
+# Alpha16 — iPad 1 MKV/H.264 Oynatma Politikası
 
-MKV + H.264 playback is explicitly an iPad1Player responsibility.
+MKV + H.264 oynatma açıkça iPad1Player'ın sorumluluğudur.
 
-Alpha16 does not enable a decoder yet; it defines the runtime decision policy that
-future FFmpeg decode must obey.
+Alpha16 henüz bir çözücü açmaz; gelecekteki FFmpeg çözmenin uyması gereken çalışma zamanı karar politikasını tanımlar.
 
-## Safe target
+## Güvenli hedef
 
-Software H.264 test target:
-- 360p class
-- 480p class
-- up to roughly 854x480
+Yazılımsal H.264 test hedefi:
+- 360p sınıfı
+- 480p sınıfı
+- yaklaşık 854x480'e kadar
 
-Status:
-- TEST_REQUIRED until real-device playback passes
-- intended primary software path
+Durum:
+- gerçek cihazda oynatma geçene kadar TEST_REQUIRED
+- amaçlanan birincil yazılımsal yol
 
 ## 720p
 
-720p-class H.264:
-- software decode is NOT a primary path
-- allowed only through a verified legacy hardware/hybrid decode path
-- remains TEST_REQUIRED
-- `IP1_LEGACY_H264_HW` must not be enabled without an actual iPad 1 test
+720p sınıfı H.264:
+- yazılımsal çözme birincil yol DEĞİL
+- yalnızca doğrulanmış eski donanım/hibrit çözme yoluyla izinli
+- TEST_REQUIRED olarak kalıyor
+- `IP1_LEGACY_H264_HW`, gerçek bir iPad 1 testi olmadan açılmamalı
 
-## Above 720p
+## 720p üstü
 
-Rejected for normal iPad 1 playback.
+Normal iPad 1 oynatması için reddedildi.
 
-## Why
+## Neden
 
-The goal is not to reject MKV/H.264. The goal is to select the decode method based on
-the A4 CPU and ~256 MB RAM limits.
+Amaç MKV/H.264'ü reddetmek değil. Amaç, çözme yöntemini A4 işlemci ve ~256 MB RAM sınırlarına göre seçmek.
 
-Container parsing and H.264 playback are separate concerns:
-- MKV demux is lightweight enough
-- H.264 decode cost depends heavily on resolution/profile/bitrate
+Konteyner ayrıştırma ve H.264 oynatma ayrı konulardır:
+- MKV demux yeterince hafiftir
+- H.264 çözme maliyeti büyük ölçüde çözünürlüğe/profile/bit hızına bağlıdır
 
-## Player scope
+## Player kapsamı
 
-Owned by iPad1Player:
+iPad1Player'a ait:
 - MKV demux
-- H.264 decode
-- renderer
-- A/V sync
-- frame drop
-- audio decode/output
-- subtitle/audio track selection
+- H.264 çözme
+- görüntüleyici
+- A/V senkronizasyonu
+- kare atma
+- ses çözme/çıkışı
+- altyazı/ses izi seçimi
 
-Not owned:
-- file browsing/management -> iPad1Files
-- PDF/document reading -> iPad1PDFReader
-- downloads -> iPad1Downloader
+Ait olmayan:
+- dosya gezinme/yönetimi -> iPad1Files
+- PDF/belge okuma -> iPad1PDFReader
+- indirmeler -> iPad1Downloader

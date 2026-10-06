@@ -1,27 +1,27 @@
-# iPad1Player Architecture
+# iPad1Player Mimarisi
 
-## Design Goals
+## Tasarım hedefleri
 
-iPad1Player is optimized for extreme legacy-device constraints:
+iPad1Player, eski cihazın aşırı kısıtları için optimize edilmiştir:
 
-- single-core-class iPad 1 hardware
+- tek çekirdek sınıfında iPad 1 donanımı
 - ~256 MB RAM
 - iOS 5.1.1
 - armv7
-- legacy OpenGL ES 2
-- legacy AudioQueue
+- eski OpenGL ES 2
+- eski AudioQueue
 - non-ARC Objective-C
 
-The architecture prioritizes:
+Mimarinin öncelikleri:
 
-- bounded memory
-- predictable CPU load
-- minimal copying
-- graceful degradation
-- separation of suite responsibilities
-- real-device compatibility
+- sınırlı bellek
+- öngörülebilir CPU yükü
+- en az kopyalama
+- nazikçe performans düşürme (graceful degradation)
+- uygulama ailesi sorumluluklarının ayrılması
+- gerçek cihaz uyumluluğu
 
-## High-Level Playback Pipeline
+## Üst düzey oynatma hattı
 
     Local media path
           |
@@ -63,194 +63,192 @@ The architecture prioritizes:
           v
     IP1AudioQueueOutput
 
-## Demux Model
+## Demux modeli
 
-Only one thread owns and calls:
+Şunu yalnızca tek bir iş parçacığı sahiplenir ve çağırır:
 
     av_read_frame()
 
-This is a hard architectural rule.
+Bu kesin bir mimari kuraldır.
 
-The demux thread routes packets by stream index.
+Demux iş parçacığı paketleri akış numarasına göre yönlendirir.
 
-Audio packets remain on the demux/audio path.
+Ses paketleri demux/ses yolunda kalır.
 
-Video packets are copied with `av_packet_ref` and transferred to a bounded queue.
+Video paketleri `av_packet_ref` ile kopyalanıp sınırlı bir kuyruğa aktarılır.
 
-## Video Packet Queue
+## Video paket kuyruğu
 
-Class:
+Sınıf:
 
     IP1PacketQueue
 
-Current video queue policy:
+Güncel video kuyruğu politikası:
 
-- maximum items: 32
-- maximum compressed bytes: 4 MB
-- thread-safe
-- bounded
-- H.264 decode performed by one worker
+- en fazla öğe: 32
+- en fazla sıkıştırılmış bayt: 4 MB
+- iş parçacığı güvenli
+- sınırlı
+- H.264 çözmeyi tek bir işçi yapar
 
-Random compressed H.264 packet dropping is avoided because reference-frame dependencies can corrupt later decoded pictures.
+Referans kare bağımlılıkları sonraki çözülen görüntüleri bozabileceği için sıkıştırılmış H.264 paketlerinin rastgele atılmasından kaçınılır.
 
-If the queue temporarily fills, the demux thread yields briefly instead of arbitrarily destroying the H.264 reference chain.
+Kuyruk geçici olarak dolarsa demux iş parçacığı H.264 referans zincirini keyfi şekilde bozmak yerine kısa süre bekler.
 
-Future timing-based dropping should occur at decoded-frame level where possible, not by randomly discarding compressed reference packets.
+İleride zamanlamaya dayalı atma, rastgele sıkıştırılmış referans paketi atmak yerine mümkün olduğunca çözülmüş kare düzeyinde yapılmalıdır.
 
-## Video Decoder
+## Video çözücü
 
-Class:
+Sınıf:
 
     IP1FFmpegVideoDecoder
 
-Current target:
+Güncel hedef:
 
 - AV_CODEC_ID_H264
 - thread_count = 1
-- software decoding
+- yazılımsal çözme
 - YUV420P
 
-The decoder retains the most recently decoded AVFrame using `av_frame_ref`.
+Çözücü en son çözülen AVFrame'i `av_frame_ref` ile tutar.
 
-This is necessary because the working `AVFrame` passed to repeated `avcodec_receive_frame` calls may be reused/unreferenced by FFmpeg.
+Bu gereklidir, çünkü tekrarlanan `avcodec_receive_frame` çağrılarına verilen çalışma `AVFrame`'i FFmpeg tarafından yeniden kullanılabilir/referansı bırakılabilir.
 
-## Video Renderer
+## Video görüntüleyici
 
-Class:
+Sınıf:
 
     IP1YUVRendererView
 
-Technology:
+Teknoloji:
 
 - CAEAGLLayer
 - EAGLContext
 - OpenGL ES 2
-- GL_LUMINANCE textures
-- Y/U/V planes
-- fragment shader YUV -> RGB
+- GL_LUMINANCE dokuları
+- Y/U/V düzlemleri
+- fragment shader ile YUV -> RGB
 
-The renderer uses a producer/back buffer and render/front buffer.
+Görüntüleyici bir üretici/arka tampon ve bir görüntüleme/ön tampon kullanır.
 
-Policy:
+Politika:
 
     newest frame wins
 
-Only one main-thread render request may be scheduled at a time.
+(en yeni kare kazanır)
 
-This prevents unbounded `performSelectorOnMainThread` buildup.
+Aynı anda ana iş parçacığında yalnızca bir görüntüleme isteği planlanabilir.
 
-OpenGL work occurs after the frame-buffer lock is released.
+Bu, `performSelectorOnMainThread` çağrılarının sınırsız birikmesini önler.
 
-Texture memory is allocated with `glTexImage2D` when size changes.
+OpenGL işleri kare tamponu kilidi bırakıldıktan sonra yapılır.
 
-Normal frame updates use:
+Doku belleği boyut değişince `glTexImage2D` ile ayrılır.
+
+Normal kare güncellemeleri şunu kullanır:
 
     glTexSubImage2D
 
-## Audio Decoder
+## Ses çözücü
 
-Class:
+Sınıf:
 
     IP1FFmpegAudioDecoder
 
-Supported runtime audio codecs currently include:
+Çalışma zamanında desteklenen ses codec'leri şu an:
 
 - AAC
 - MP3
 
-Decoded audio is normalized to:
+Çözülen ses libswresample ile şuna normalleştirilir:
 
 - 44.1 kHz
 - stereo
-- signed 16-bit packed PCM
+- işaretli 16 bit paketlenmiş PCM
 
-using libswresample.
+SwrContext kalıcıdır ve yalnızca giriş/çıkış format parametreleri değişince yeniden oluşturulur.
 
-SwrContext is persistent and rebuilt only if input/output format parameters change.
+Her AAC karesi için yeniden oluşturulmamalıdır.
 
-It must not be recreated for every AAC frame.
+## Ses çıkışı
 
-## Audio Output
-
-Components:
+Bileşenler:
 
     IP1AudioEngine
     IP1PCMRingBuffer
     IP1AudioQueueOutput
 
-Current PCM ring:
+Güncel PCM halka tamponu:
 
 - 256 KB
 
 AudioQueue:
 
-- three buffers
-- 16 KB each
+- üç tampon
+- her biri 16 KB
 - AVAudioSessionCategoryPlayback
-- active AVAudioSession
+- aktif AVAudioSession
 
-## Clock
+## Saat
 
-Class:
+Sınıf:
 
     IP1PlaybackClock
 
-Audio is intended to be the master clock.
+Ana saatin (master clock) ses olması amaçlanır.
 
-Current decoded-audio clock is based on bytes written into the PCM path and is not yet a true hardware-presentation clock.
+Güncel çözülmüş ses saati PCM yoluna yazılan baytlara dayanır, henüz gerçek donanım sunum saati değildir.
 
-This distinction is important for the next A/V synchronization phase.
+Bu ayrım bir sonraki A/V senkronizasyon aşaması için önemlidir.
 
-## Native Playback
+## Yerleşik oynatma
 
-MP4/MOV/M4V may use legacy:
+MP4/MOV/M4V uygun olduğunda eski şunu kullanabilir:
 
     MPMoviePlayerController
 
-where appropriate.
+FFmpeg çalışma zamanı şu an öncelikle eski yerleşik yolun yeterince işleyemediği konteyner/codec kombinasyonlarını hedefler.
 
-FFmpeg runtime currently primarily targets container/codec combinations that the legacy native path cannot adequately handle.
+## Bellek kuralları
 
-## Memory Rules
+iPad 1 için:
 
-For iPad 1:
+- sınırsız paket kuyruğu yok
+- sınırsız kare kuyruğu yok
+- tam RGB kare dönüşümünden kaçın
+- UIImage ile video görüntülemekten kaçın
+- büyük kare geçmişi yok
+- tercihen yalnızca en son çözülen kare
+- sıkıştırılmış kuyruklar küçük tutulur
+- MRC altında açık temizlik
 
-- no unbounded packet queues
-- no unbounded frame queues
-- avoid full RGB frame conversion
-- avoid UIImage video rendering
-- no large frame history
-- prefer 1 latest decoded frame
-- keep compressed queues small
-- use explicit cleanup under MRC
+## İş parçacığı modeli
 
-## Thread Model
+Amaçlanan güncel iş parçacıkları:
 
-Current intended threads:
-
-1. Main/UI thread
+1. Ana/arayüz iş parçacığı
    - UIKit
-   - OpenGL presentation
+   - OpenGL sunumu
 
-2. FFmpeg demux/audio thread
+2. FFmpeg demux/ses iş parçacığı
    - `av_read_frame`
-   - AAC/MP3 decode
-   - PCM enqueue
+   - AAC/MP3 çözme
+   - PCM'i kuyruğa ekleme
 
-3. Video decode worker
-   - H.264 decode
-   - decoded-frame delivery
+3. Video çözme işçisi
+   - H.264 çözme
+   - çözülen kareyi teslim etme
 
-4. AudioQueue internal callback thread
-   - PCM consumption
+4. AudioQueue iç geri çağrı iş parçacığı
+   - PCM tüketimi
 
-No second demux reader is permitted.
+İkinci bir demux okuyucusuna izin yoktur.
 
-## Known Technical Debt
+## Bilinen teknik borç
 
-- PCM ring is not yet fully thread-safe.
-- AudioQueue callback uses KVC to access the PCM ring.
-- audio clock is not actual presentation position.
-- FFmpeg seek/flush is incomplete.
-- video PTS is not yet used for presentation timing.
-- EOF needs explicit playback-complete handling.
+- PCM halka tamponu henüz tam iş parçacığı güvenli değil.
+- AudioQueue geri çağrısı PCM halkasına KVC ile erişiyor.
+- ses saati gerçek sunum konumu değil.
+- FFmpeg ileri sarma/temizleme eksik.
+- video PTS henüz sunum zamanlamasında kullanılmıyor.
+- dosya sonu (EOF) için açık "oynatma tamamlandı" işlemi gerekiyor.

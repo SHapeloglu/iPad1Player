@@ -1,6 +1,6 @@
-# Alpha18 — iPad 1 End-to-End Audio Loop
+# Alpha18 — iPad 1 Uçtan Uca Ses Döngüsü
 
-Alpha18 connects the Player-owned audio runtime path:
+Alpha18, Player'a ait ses çalışma zamanı yolunu birbirine bağlar:
 
 ```
 MKV/AVI
@@ -13,39 +13,39 @@ MKV/AVI
   -> audio master clock
 ```
 
-## iPad 1 constraints
+## iPad 1 kısıtları
 
-- one demux thread only
-- selected audio stream only
-- all video/subtitle packets are skipped in this audio-only runtime phase
-- 64 KB decode scratch buffer
-- decoder yields when PCM ring exceeds 75% occupancy
-- 3 x 16 KB AudioQueue output buffers
-- no unbounded packet/PCM queues
-- per-thread autorelease pool
-- FFmpeg context closes at thread exit
+- yalnızca tek demux iş parçacığı
+- yalnızca seçilen ses akışı
+- bu yalnız-ses çalışma zamanı aşamasında tüm video/altyazı paketleri atlanır
+- 64 KB çözme karalama tamponu
+- PCM halkası %75 doluluğu aşınca çözücü bekler
+- 3 x 16 KB AudioQueue çıkış tamponu
+- sınırsız paket/PCM kuyruğu yok
+- iş parçacığı başına autorelease pool
+- FFmpeg bağlamı iş parçacığı çıkışında kapanır
 
-## Clock
+## Saat
 
-The audio runtime updates clock time from the amount of accepted S16 PCM:
+Ses çalışma zamanı, kabul edilen S16 PCM miktarından saat zamanını günceller:
 
 `seconds = bytes / (sampleRate * channels * 2)`
 
-This becomes the future master clock for video synchronization.
+Bu, video senkronizasyonu için gelecekteki ana saat olacak.
 
-## Scope review
+## Kapsam incelemesi
 
-No Alpha18 feature belongs to:
+Alpha18'deki hiçbir özellik şunlara ait değildir:
 - iPad1Files
 - iPad1PDFReader
 - iPad1Downloader
 
-All changes are direct media playback responsibilities of iPad1Player.
+Tüm değişiklikler iPad1Player'ın doğrudan medya oynatma sorumluluklarıdır.
 
-## Limitations
+## Sınırlamalar
 
-- FFmpeg armv7 static libraries are still external.
-- Only packed S16 decoder output is accepted.
-- AAC/MP3 decoders that output FLTP/S16P still require a tested swresample phase.
-- This release does not decode H.264 video.
-- Seek integration into the audio session is the next runtime step.
+- FFmpeg armv7 statik kütüphaneleri hâlâ harici.
+- Yalnızca paketlenmiş S16 çözücü çıkışı kabul ediliyor.
+- FLTP/S16P çıkışı veren AAC/MP3 çözücüler hâlâ test edilmiş bir swresample aşaması gerektiriyor.
+- Bu sürüm H.264 video çözmüyor.
+- İleri sarmanın ses oturumuna entegrasyonu sıradaki çalışma zamanı adımı.

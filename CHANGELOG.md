@@ -1,129 +1,129 @@
-# Changelog
+# Değişiklik Günlüğü
 
 ## v0.1-alpha18
-- Connected av_read_frame to selected AAC/MP3 decode.
-- Connected decoded S16 PCM to bounded ring buffer and AudioQueue.
-- Added single-thread low-memory demux loop.
-- Added PCM occupancy backpressure.
-- Added audio master-clock progression.
-- Preserved suite responsibility boundaries.
+- av_read_frame seçilen AAC/MP3 çözücüye bağlandı.
+- Çözülen S16 PCM sınırlı halka tampona ve AudioQueue'ya bağlandı.
+- Tek iş parçacıklı, düşük bellekli demux döngüsü eklendi.
+- PCM doluluk geri basıncı eklendi.
+- Ses ana saati ilerlemesi eklendi.
+- Uygulama ailesi sorumluluk sınırları korundu.
 
 ## v0.1-alpha17
-- Added low-memory AudioQueue output.
-- Added FFmpeg AAC/MP3 decoder source.
-- Added 3x16 KB output-buffer policy.
-- Kept 256 KB bounded PCM ring buffer.
-- Preserved suite responsibility boundaries.
-- FFmpeg libraries remain external and device testing is required.
+- Düşük bellekli AudioQueue çıkışı eklendi.
+- FFmpeg AAC/MP3 çözücü kaynağı eklendi.
+- 3x16 KB çıkış tamponu politikası eklendi.
+- 256 KB sınırlı PCM halka tampon korundu.
+- Uygulama ailesi sorumluluk sınırları korundu.
+- FFmpeg kütüphaneleri harici kalıyor; cihaz testi gerekiyor.
 
 ## v0.1-alpha16
-- Declared MKV/H.264 playback as explicit Player scope.
-- Added centralized H.264 resolution/decode policy.
-- Added 360p/480p software test targets.
-- Kept 720p software primary path rejected.
-- Added legacy hardware/hybrid 720p test gate.
-- Added decode capability reporting.
+- MKV/H.264 oynatma açıkça Player kapsamı olarak ilan edildi.
+- Merkezi H.264 çözünürlük/çözme politikası eklendi.
+- 360p/480p yazılımsal test hedefleri eklendi.
+- 720p yazılımsal birincil yol reddedilmiş olarak kaldı.
+- Eski donanım/hibrit 720p test kapısı eklendi.
+- Çözme yeteneği raporlama eklendi.
 
 ## v0.1-alpha15
-- Added code-level suite scope enforcement.
-- Added bounded PCM ring buffer.
-- Added conservative audio runtime profile.
-- Added audio engine boundary.
-- Preserved iPad1Files/iPad1PDFReader/iPad1Downloader separation.
-- No unsupported decode claim added.
+- Kod düzeyinde uygulama ailesi kapsam denetimi eklendi.
+- Sınırlı PCM halka tampon eklendi.
+- Temkinli ses çalışma zamanı profili eklendi.
+- Ses motoru sınırı eklendi.
+- iPad1Files / iPad1PDFReader / iPad1Downloader ayrımı korundu.
+- Desteklenmeyen çözme iddiası eklenmedi.
 
 ## v0.1-alpha14
-- Replaced FFmpeg parse stub with real libavformat parse source behind build flag.
-- Added legacy/new FFmpeg AVStream compatibility helpers.
-- Added real track/chapter/media-info mapping.
-- Added FFmpeg build version reporting.
-- Preserved immediate context close and zero-decode parse policy.
-- FFmpeg static libraries are intentionally not bundled.
+- FFmpeg ayrıştırma taslağı, derleme bayrağı arkasında gerçek libavformat ayrıştırma kaynağıyla değiştirildi.
+- Eski/yeni FFmpeg AVStream uyumluluk yardımcıları eklendi.
+- Gerçek iz/bölüm/medya bilgisi eşlemesi eklendi.
+- FFmpeg derleme sürümü raporlama eklendi.
+- Bağlamı hemen kapatma ve sıfır çözmeli ayrıştırma politikası korundu.
+- FFmpeg statik kütüphaneleri bilinçli olarak pakete eklenmedi.
 
 ## v0.1-alpha13
-- Added file/path preflight validation.
-- Added corrupt metadata sanity limits.
-- Added bounded parse/close stress-test harness.
-- Added MRC-friendly per-iteration autorelease pools.
-- Kept codec/decode/render features disabled.
+- Dosya/yol ön kontrol doğrulaması eklendi.
+- Bozuk metadata için makullük sınırları eklendi.
+- Sınırlı ayrıştır/kapat yük testi düzeneği eklendi.
+- MRC dostu, her döngüde autorelease pool eklendi.
+- Codec/çözme/görüntüleme özellikleri kapalı tutuldu.
 
 ## v0.1-alpha12
-- Added FFmpeg build checks.
-- Added parse result validation.
-- Added parse fallback policy.
-- Added strict pre-integration checklist for iPad 1.
-- Kept decode/render/audio disabled.
+- FFmpeg derleme kontrolleri eklendi.
+- Ayrıştırma sonucu doğrulaması eklendi.
+- Ayrıştırma geri dönüş politikası eklendi.
+- iPad 1 için sıkı entegrasyon öncesi kontrol listesi eklendi.
+- Çözme/görüntüleme/ses kapalı tutuldu.
 
 ## v0.1-alpha11
-- Added parse diagnostics.
-- Added parse time and media duration sanity limits.
-- Added bounded stream metadata normalization.
-- Added parse-and-close runtime contract.
-- Kept decode/render/audio disabled.
-- Strengthened iPad 1 parse safety gate.
+- Ayrıştırma tanılamaları eklendi.
+- Ayrıştırma süresi ve medya süresi makullük sınırları eklendi.
+- Sınırlı akış metadata normalleştirmesi eklendi.
+- Ayrıştır-ve-kapat çalışma zamanı sözleşmesi eklendi.
+- Çözme/görüntüleme/ses kapalı tutuldu.
+- iPad 1 ayrıştırma güvenlik kapısı güçlendirildi.
 
 ## v0.1-alpha10
-- Added centralized iPad 1 memory budgets.
-- Reduced compressed packet budgets.
-- Added packet-queue trimming under memory pressure.
-- Added player low-memory purge.
-- Changed default playback rates to safe 0.5x–1.5x profile.
-- Tightened parse metadata, track and chapter caps.
-- Preserved 2.0x as TEST_REQUIRED instead of default.
+- Merkezi iPad 1 bellek bütçeleri eklendi.
+- Sıkıştırılmış paket bütçeleri azaltıldı.
+- Bellek baskısında paket kuyruğu kırpma eklendi.
+- Oynatıcı düşük bellek temizliği eklendi.
+- Varsayılan oynatma hızları güvenli 0.5x–1.5x profiline çekildi.
+- Ayrıştırma metadata, iz ve bölüm sınırları sıkılaştırıldı.
+- 2.0x varsayılan yerine TEST_REQUIRED olarak tutuldu.
 
 ## v0.1-alpha9
-- Added low-memory parse-only FFmpeg phase contract.
-- Added parse-result model for tracks/chapters/media info.
-- Added defensive parse policy and limits.
-- Added device-test status model.
-- Explicitly rejected packet buffering/frame decode during parse-only phase.
+- Düşük bellekli, yalnız ayrıştıran FFmpeg aşaması sözleşmesi eklendi.
+- İz/bölüm/medya bilgisi için ayrıştırma sonucu modeli eklendi.
+- Savunmacı ayrıştırma politikası ve sınırları eklendi.
+- Cihaz testi durum modeli eklendi.
+- Yalnız ayrıştırma aşamasında paket tamponlama/kare çözme açıkça reddedildi.
 
 ## v0.1-alpha8
-- Added playback clock model.
-- Added video frame render/wait/drop policy.
-- Expanded FFmpeg adapter lifecycle.
-- Added audio/subtitle track switching contracts.
-- Routed MKV backend lifecycle to adapter.
-- Documented A/V sync, seek and frame-drop architecture.
+- Oynatma saati modeli eklendi.
+- Video karesi görüntüle/bekle/at politikası eklendi.
+- FFmpeg adaptör yaşam döngüsü genişletildi.
+- Ses/altyazı izi değiştirme sözleşmeleri eklendi.
+- MKV altyapı yaşam döngüsü adaptöre yönlendirildi.
+- A/V senkronizasyon, ileri sarma ve kare atma mimarisi belgelendi.
 
 ## v0.1-alpha7
-- Added iPad 1 compatibility gate and status matrix.
-- Optimized subtitle lookup to O(1) sequential / O(log n) seek path.
-- Reduced resume persistence frequency from 5s to 30s.
-- Removed forced NSUserDefaults synchronization.
-- Added background/termination resume save.
-- Fixed sleep-timer cleanup in MRC lifecycle.
-- Added brightness restoration after playback.
-- Changed volume gesture to target movie playback.
-- Corrected actual playback-speed presets through 2.0x.
-- Marked device-sensitive features as TEST_REQUIRED.
+- iPad 1 uyumluluk kapısı ve durum matrisi eklendi.
+- Altyazı arama O(1) sıralı / O(log n) ileri sarma yoluna optimize edildi.
+- Devam konumu kaydetme sıklığı 5 sn'den 30 sn'ye düşürüldü.
+- Zorunlu NSUserDefaults senkronizasyonu kaldırıldı.
+- Arka plana geçişte/kapanışta devam konumu kaydı eklendi.
+- MRC yaşam döngüsünde uyku zamanlayıcısı temizliği düzeltildi.
+- Oynatma sonrası parlaklığı geri yükleme eklendi.
+- Ses hareketi film oynatmayı hedefleyecek şekilde değiştirildi.
+- Gerçek oynatma hızı ön ayarları 2.0x'e kadar düzeltildi.
+- Cihaza duyarlı özellikler TEST_REQUIRED olarak işaretlendi.
 
 ## v0.1-alpha6
-- Added chapter model.
-- Added detailed media-info model.
-- Added sleep-timer API.
-- Expanded playback-speed target set through 2.0x.
-- Extended FFmpeg/MKV backend contracts for chapters and detailed media information.
-- Updated sector roadmap priorities.
+- Bölüm modeli eklendi.
+- Ayrıntılı medya bilgisi modeli eklendi.
+- Uyku zamanlayıcısı API'si eklendi.
+- Oynatma hızı hedefleri 2.0x'e kadar genişletildi.
+- FFmpeg/MKV altyapı sözleşmeleri bölümler ve ayrıntılı medya bilgisi için genişletildi.
+- Sektör yol haritası öncelikleri güncellendi.
 
 ## v0.1-alpha5
-- Added media capability/codec matrix.
-- Added FFmpeg adapter boundary.
-- Added AVI backend routing path.
-- Added bounded FFmpeg packet budgets and seek flush contract.
-- Added sector roadmap and codec matrix docs.
-- Formalized P0/P1/P2/P3 priorities.
-- Formalized legacy-format targets and modern-codec non-goals.
+- Medya yetenek/codec matrisi eklendi.
+- FFmpeg adaptör sınırı eklendi.
+- AVI altyapı yönlendirme yolu eklendi.
+- Sınırlı FFmpeg paket bütçeleri ve ileri sarmada temizleme sözleşmesi eklendi.
+- Sektör yol haritası ve codec matrisi dokümanları eklendi.
+- P0/P1/P2/P3 öncelikleri resmileştirildi.
+- Eski format hedefleri ve güncel codec'lerin hedef dışı olduğu resmileştirildi.
 
 ## v0.1-alpha4
-- Added MKV backend lifecycle API.
-- Added media track model.
-- Added bounded packet queue for low-memory operation.
-- Added multi-audio / embedded subtitle / delay capability contracts.
-- Added decode mode model and legacy-HW capability gate.
-- Added optional FFmpeg build hooks.
-- Added MKV pipeline, A/V sync and memory-budget documentation.
-- Preserved suite responsibility boundaries.
+- MKV altyapı yaşam döngüsü API'si eklendi.
+- Medya izi modeli eklendi.
+- Düşük bellekli çalışma için sınırlı paket kuyruğu eklendi.
+- Çoklu ses / gömülü altyazı / gecikme yetenek sözleşmeleri eklendi.
+- Çözme modu modeli ve eski donanım yetenek kapısı eklendi.
+- İsteğe bağlı FFmpeg derleme kancaları eklendi.
+- MKV hattı, A/V senkronizasyonu ve bellek bütçesi dokümantasyonu eklendi.
+- Uygulama ailesi sorumluluk sınırları korundu.
 
 ## v0.1-alpha3
-- Competitor-inspired playback controls, subtitle UX, gestures, aspect ratios, speed, A-B repeat and media info.
+- Rakiplerden esinlenen oynatma kontrolleri, altyazı deneyimi, hareketler, en-boy oranları, hız, A-B tekrar ve medya bilgisi.

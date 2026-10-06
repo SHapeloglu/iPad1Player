@@ -1,44 +1,43 @@
-# Alpha17 — iPad 1 Audio Runtime
+# Alpha17 — iPad 1 Ses Çalışma Zamanı
 
-Alpha17 implements Player-owned audio runtime pieces only.
+Alpha17 yalnızca Player'a ait ses çalışma zamanı parçalarını uygular.
 
-## Added
+## Eklenenler
 
-### AudioQueue output
-- iOS 5-compatible AudioQueue API
-- 16 KB output buffers
-- 3 queue buffers (~48 KB AudioQueue payload)
-- bounded 256 KB PCM ring buffer
-- 16-bit signed stereo baseline
-- 44.1 kHz conservative default
+### AudioQueue çıkışı
+- iOS 5 uyumlu AudioQueue API'si
+- 16 KB çıkış tamponları
+- 3 kuyruk tamponu (~48 KB AudioQueue yükü)
+- sınırlı 256 KB PCM halka tampon
+- 16 bit işaretli stereo temel değer
+- temkinli varsayılan 44.1 kHz
 
-### FFmpeg AAC/MP3 decoder source
-When `IP1_FFMPEG_BACKEND` is linked:
-- AAC decoder lookup
-- MP3 decoder lookup
-- legacy/new FFmpeg decode API branches
-- packed S16 PCM output path
+### FFmpeg AAC/MP3 çözücü kaynağı
+`IP1_FFMPEG_BACKEND` bağlandığında:
+- AAC çözücü arama
+- MP3 çözücü arama
+- eski/yeni FFmpeg çözme API dalları
+- paketlenmiş S16 PCM çıkış yolu
 
-Non-S16 FFmpeg sample formats are deliberately rejected until `swresample`
-is introduced and tested on iPad 1.
+S16 dışı FFmpeg örnek formatları, `swresample` eklenip iPad 1'de test edilene kadar bilinçli olarak reddedilir.
 
-## Scope filter
+## Kapsam filtresi
 
-All work in this release belongs to iPad1Player:
-- audio decode
-- PCM buffering
-- audio device output
-- audio clock foundation
+Bu sürümdeki tüm işler iPad1Player'a aittir:
+- ses çözme
+- PCM tamponlama
+- ses cihazı çıkışı
+- ses saati temeli
 
-No change is required in:
+Şunlarda değişiklik gerekmez:
 - iPad1Files
 - iPad1PDFReader
 - iPad1Downloader
 
-## Important limitations
+## Önemli sınırlamalar
 
-This source package still does not bundle FFmpeg armv7 static libraries.
-The decoder source therefore becomes active only when the verified backend is linked.
+Bu kaynak paketi hâlâ FFmpeg armv7 statik kütüphanelerini içermiyor.
+Bu yüzden çözücü kaynağı ancak doğrulanmış altyapı bağlandığında devreye girer.
 
-The demux loop is not yet wired to feed decoded AAC/MP3 packets continuously.
-Alpha17 provides the real decoder/output components required for that next integration.
+Demux döngüsü henüz çözülen AAC/MP3 paketlerini sürekli besleyecek şekilde bağlanmadı.
+Alpha17, bir sonraki entegrasyon için gereken gerçek çözücü/çıkış bileşenlerini sağlıyor.

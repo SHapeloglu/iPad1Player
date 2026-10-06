@@ -1,29 +1,29 @@
 # CLAUDE.md — iPad1Player
 
-Media player for **iPad 1 / iOS 5.1.1 / armv7 / ~256 MB RAM**, Objective-C/UIKit, **non-ARC**, Theos, legacy iPhoneOS 6.1 SDK. Owns demux, audio/video decode and output, A/V sync, seek/resume, playback controls, subtitles, track selection, chapters, media info and playback diagnostics. Package `com.olap.ipad1player` **0.1-alpha18** (`control`).
+**iPad 1 / iOS 5.1.1 / armv7 / ~256 MB RAM** için medya oynatıcı; Objective-C/UIKit, **non-ARC**, Theos, eski iPhoneOS 6.1 SDK. Demux, ses/video çözme ve çıkış, A/V senkronizasyonu, ileri sarma/devam, oynatma kontrolleri, altyazılar, iz seçimi, bölümler, medya bilgisi ve oynatma tanılamasından sorumludur. Paket `com.olap.ipad1player` **0.1-alpha18** (`control`).
 
 - GitHub: https://github.com/SHapeloglu/iPad1Player
-- **Authoritative handoff: `PROJECT_CONTEXT.md`.** Then `ARCHITECTURE.md`, `TASK.md`, `SESSION.md`, `SUITE_HANDOFF.md`, `docs/` (per-alpha notes ALPHA6…ALPHA18, `CODEC_MATRIX.md`, `PLAYBACK_ENGINE.md`, `MKV_BACKEND.md`, `IPAD1_COMPATIBILITY.md`, `RESPONSIBILITY.md`).
+- **Belirleyici devir belgesi: `PROJECT_CONTEXT.md`.** Ardından `ARCHITECTURE.md`, `TASK.md`, `SESSION.md`, `SUITE_HANDOFF.md`, `docs/` (alpha başına notlar ALPHA6…ALPHA18, `CODEC_MATRIX.md`, `PLAYBACK_ENGINE.md`, `MKV_BACKEND.md`, `IPAD1_COMPATIBILITY.md`, `RESPONSIBILITY.md`).
 
-## Current state (verified on the real iPad 1)
+## Güncel durum (gerçek iPad 1'de doğrulandı)
 
-MKV → FFmpeg demux (single `av_read_frame` thread) → AAC decode → persistent swresample → PCM ring → AudioQueue, and H.264 Main 854×480 → bounded packet queue → dedicated decode worker → YUV420P → OpenGL ES 2 YUV shader → CAEAGLLayer. Simultaneous audio+video plays without the earlier micro-freezes.
+MKV → FFmpeg demux (tek `av_read_frame` iş parçacığı) → AAC çözme → kalıcı swresample → PCM halka → AudioQueue; ve H.264 Main 854×480 → sınırlı paket kuyruğu → ayrılmış çözme işçisi → YUV420P → OpenGL ES 2 YUV shader → CAEAGLLayer. Ses ve video, önceki mikro donmalar olmadan birlikte oynuyor.
 
-**Immediate next action (PROJECT_CONTEXT):** timestamp-aware A/V sync — audio as master clock, video PTS, bounded scheduling, controlled late-frame dropping. Don't start unrelated features before this is stable.
+**Hemen yapılacak sonraki adım (PROJECT_CONTEXT):** zaman damgasına duyarlı A/V senkronizasyonu — ana saat ses, video PTS, sınırlı zamanlama, kontrollü geç kare atma. Bu kararlı olmadan ilgisiz özelliklere başlama.
 
-## Build
+## Derleme
 
 ```bash
 make clean && make package FINALPACKAGE=1     # ARCHS=armv7, TARGET=iphone:clang:6.1:5.1, -fno-objc-arc, -DIP1_FFMPEG_BACKEND
 ```
 
-- The FFmpeg backend links **armv7 static libs** from `vendor/ffmpeg/lib` (`libavformat.a`, `libavcodec.a`, `libavutil.a`, swresample). Only headers + pkgconfig are in git; the `.a` files must exist locally (see `vendor/ffmpeg/README.md`).
-- Install over SSH with legacy `ssh-rsa` options; opened by siblings via `ipad1player://open?path=<percent-encoded-local-path>`.
+- FFmpeg altyapısı `vendor/ffmpeg/lib` altındaki **armv7 statik kütüphaneleri** bağlar (`libavformat.a`, `libavcodec.a`, `libavutil.a`, swresample). Git'te yalnızca başlık dosyaları + pkgconfig var; `.a` dosyaları yerelde bulunmalı (bkz. `vendor/ffmpeg/README.md`).
+- Eski `ssh-rsa` seçenekleriyle SSH üzerinden kurulur; kardeş uygulamalar `ipad1player://open?path=<percent-encoded-local-path>` ile açar.
 
-## Rules
+## Kurallar
 
-- Suite boundary: file browsing/archives → iPad1Files; downloads → iPad1Downloader/FTPDownloader; PDF → iPad1PDFReader. Don't pull those responsibilities into the player.
-- Codec policy: H.264 software ≤ 854×480, AAC, MP3, MKV, AVI where compatible, native MP4/MOV/M4V via legacy MediaPlayer. **Rejected:** HEVC, AV1, VP9, 4K, HDR, 10-bit, H.264 720p software, heavy ASS rendering.
-- Exactly one demux reader; every queue bounded; avoid frame/packet copies; persistent SwrContext; renderer keeps only the latest frame.
-- Manual retain/release; `@autoreleasepool` in worker loops; iOS 5 APIs only.
-- A feature is "working" only after real-device playback — compiling is not enough. Record results in `SESSION.md` / `docs/ALPHA*.md`.
+- Uygulama ailesi sınırı: dosya gezinme/arşivler → iPad1Files; indirmeler → iPad1Downloader/FTPDownloader; PDF → iPad1PDFReader. Bu sorumlulukları oynatıcıya çekme.
+- Codec politikası: 854×480'e kadar yazılımsal H.264, AAC, MP3, MKV, uyumluysa AVI, eski MediaPlayer ile yerleşik MP4/MOV/M4V. **Reddedilenler:** HEVC, AV1, VP9, 4K, HDR, 10 bit, yazılımsal 720p H.264, ağır ASS görüntüleme.
+- Tam olarak bir demux okuyucusu; her kuyruk sınırlı; kare/paket kopyalarından kaçın; kalıcı SwrContext; görüntüleyici yalnızca en son kareyi tutar.
+- Manuel retain/release; işçi döngülerinde `@autoreleasepool`; yalnızca iOS 5 API'leri.
+- Bir özellik ancak gerçek cihazda oynatıldıktan sonra "çalışıyor" sayılır — derlenmesi yetmez. Sonuçları `SESSION.md` / `docs/ALPHA*.md`'ye yaz.

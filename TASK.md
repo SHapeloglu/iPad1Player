@@ -1,85 +1,85 @@
-# Current Tasks
+# Güncel Görevler
 
-## Immediate Task
+## Hemen yapılacak görev
 
-### Implement real A/V synchronization
+### Gerçek A/V senkronizasyonunu yaz
 
-Current playback renders decoded video as soon as the renderer can present it.
+Güncel oynatma, çözülen videoyu görüntüleyici sunabildiği anda gösteriyor.
 
-This produces functioning playback but does not yet provide timestamp-accurate synchronization.
+Bu çalışan bir oynatma sağlıyor ama henüz zaman damgasına göre doğru senkronizasyon sağlamıyor.
 
-Required work:
+Yapılacak iş:
 
-1. Capture video PTS from decoded AVFrame.
-2. Convert video timestamps with stream time_base.
-3. Use audio as master clock.
-4. Compare:
+1. Çözülen AVFrame'den video PTS'ini al.
+2. Video zaman damgalarını akışın time_base'i ile dönüştür.
+3. Ana saat olarak sesi kullan.
+4. Karşılaştır:
 
        videoPTS - audioClock
 
-5. If video is early:
-   - delay presentation within a bounded interval.
+5. Video erkense:
+   - sunumu sınırlı bir aralıkta geciktir.
 
-6. If video is slightly late:
-   - present immediately.
+6. Video biraz geç kaldıysa:
+   - hemen sun.
 
-7. If video is significantly late:
-   - drop decoded frame where safe.
+7. Video belirgin şekilde geç kaldıysa:
+   - güvenli olduğu yerde çözülen kareyi at.
 
-8. Keep frame queues bounded.
+8. Kare kuyruklarını sınırlı tut.
 
-9. Never block AudioQueue due to video scheduling.
+9. Video zamanlaması yüzünden AudioQueue'yu asla bloklama.
 
-## After A/V Sync
+## A/V senkronizasyonundan sonra
 
-### EOF handling
+### EOF işleme
 
-At container EOF:
+Konteyner sonunda (EOF):
 
-- drain decoder
-- drain queued video packets
-- flush delayed H.264 frames
-- finish pending PCM
-- emit playback-ended state
-- leave UI in a valid stopped/completed state
+- çözücüyü boşalt
+- kuyruktaki video paketlerini boşalt
+- geciktirilmiş H.264 karelerini temizle
+- bekleyen PCM'i bitir
+- "oynatma bitti" durumunu yay
+- arayüzü geçerli bir durdurulmuş/tamamlanmış durumda bırak
 
-### Pause / Resume
+### Duraklat / Devam
 
-Validate:
+Doğrula:
 
-- demux worker stop state
-- video worker stop state
-- packet queue state
-- AudioQueue state
-- clock continuity
+- demux işçisi durma durumu
+- video işçisi durma durumu
+- paket kuyruğu durumu
+- AudioQueue durumu
+- saatin sürekliliği
 
-### Long-duration test
+### Uzun süreli test
 
-Use a longer H.264 480p MKV and test:
+Daha uzun bir H.264 480p MKV ile test et:
 
-- 10 minutes
-- 30 minutes
-- full movie
+- 10 dakika
+- 30 dakika
+- tam film
 
-Watch for:
+İzlenecekler:
 
-- memory growth
-- audio underruns
-- frame corruption
-- thread deadlock
-- queue growth
-- A/V drift
+- bellek artışı
+- ses tampon boşalmaları
+- kare bozulması
+- iş parçacığı kilitlenmesi
+- kuyruk büyümesi
+- A/V kayması
 
-## Completion Criteria for Current Playback Phase
+## Güncel oynatma aşaması için tamamlanma ölçütleri
 
-The FFmpeg playback path should not be considered stable until:
+FFmpeg oynatma yolu şunlar sağlanmadan kararlı sayılmamalı:
 
-- clean 480p image
-- continuous audio
-- no recurring micro-freezes
-- no frame corruption
-- bounded memory
-- stable A/V sync
-- clean EOF
-- stable pause/resume
-- long-duration device test
+- temiz 480p görüntü
+- kesintisiz ses
+- tekrarlayan mikro donma yok
+- kare bozulması yok
+- sınırlı bellek
+- kararlı A/V senkronizasyonu
+- temiz EOF
+- kararlı duraklat/devam
+- uzun süreli cihaz testi

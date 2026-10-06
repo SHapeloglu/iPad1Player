@@ -1,61 +1,61 @@
-# Alpha9 — FFmpeg Integration Phase 1 (Parse-Only)
+# Alpha9 — FFmpeg Entegrasyonu 1. Aşama (Yalnızca Ayrıştırma)
 
-## Scope
+## Kapsam
 
-This phase is intentionally limited to low-memory metadata parsing.
+Bu aşama bilinçli olarak düşük bellekli metadata ayrıştırmayla sınırlıdır.
 
-Allowed:
-- open MKV/AVI container with libavformat
-- stream discovery
-- video/audio/subtitle track enumeration
-- chapter extraction
-- media info extraction
+İzin verilenler:
+- libavformat ile MKV/AVI konteynerini açma
+- akışları bulma
+- video/ses/altyazı izlerini listeleme
+- bölüm çıkarma
+- medya bilgisi çıkarma
 
-Not allowed in alpha9:
-- frame decode
-- audio decode
-- packet prebuffering
-- video renderer
-- PCM output
-- hardware decode claims
+alpha9'da izin verilmeyenler:
+- kare çözme
+- ses çözme
+- paket ön tamponlama
+- video görüntüleyici
+- PCM çıkışı
+- donanım çözme iddiaları
 
-## iPad 1 constraints
+## iPad 1 kısıtları
 
-Target:
+Hedef:
 - iPad 1 / A4
 - iOS 5.1.1
 - armv7
 - ~256 MB RAM
 - MRC/non-ARC
 
-Parse-only rules:
-- close FFmpeg context after metadata read
-- no packet queues during parse-only operation
-- no frame allocations
-- no entire-file scanning beyond what libavformat requires
-- no background indexing service
-- no persistent media library cache in Player
+Yalnızca ayrıştırma kuralları:
+- metadata okunduktan sonra FFmpeg bağlamını kapat
+- yalnız ayrıştırma sırasında paket kuyruğu yok
+- kare ayırma yok
+- libavformat'ın gerektirdiğinin ötesinde tüm dosyayı tarama yok
+- arka plan dizinleme servisi yok
+- Player'da kalıcı medya kütüphanesi önbelleği yok
 
-## Limits
+## Sınırlar
 
-Initial safety caps:
-- metadata working budget: <= 512 KB target
-- tracks: <= 32
-- chapters: <= 256
+İlk güvenlik sınırları:
+- metadata çalışma bütçesi: hedef <= 512 KB
+- izler: <= 32
+- bölümler: <= 256
 
-These are defensive limits for legacy hardware and may be adjusted after real-device tests.
+Bunlar eski donanım için savunmacı sınırlardır ve gerçek cihaz testlerinden sonra ayarlanabilir.
 
-## Required outputs
+## Gerekli çıktılar
 
 `IP1FFmpegParseResult`
-- tracks
-- chapters
-- mediaInfo
+- izler
+- bölümler
+- medya bilgisi
 
-## Test gate
+## Test kapısı
 
-A feature moves from TEST_REQUIRED to SAFE only after:
-- armv7 build succeeds
-- iOS 5.1.1 runtime test succeeds
-- no crash under memory pressure
-- acceptable open/parse latency
+Bir özellik TEST_REQUIRED'dan SAFE'e ancak şunlardan sonra geçer:
+- armv7 derlemesi başarılı
+- iOS 5.1.1 çalışma zamanı testi başarılı
+- bellek baskısında çökme yok
+- kabul edilebilir açma/ayrıştırma gecikmesi

@@ -1,81 +1,81 @@
-# Sector Roadmap
+# Sektör Yol Haritası
 
-This roadmap converts sector comparison findings into iPad1Player priorities while preserving suite responsibility boundaries.
+Bu yol haritası, sektör karşılaştırması bulgularını uygulama ailesi sorumluluk sınırlarını koruyarak iPad1Player önceliklerine dönüştürür.
 
-## P0 — universal-player core
+## P0 — evrensel oynatıcı çekirdeği
 
-Required before calling the app a real MKV player:
-- FFmpeg demux for MKV.
+Uygulamaya gerçek bir MKV oynatıcı demeden önce gerekenler:
+- MKV için FFmpeg demux.
 - H.264/AVC video.
-- AAC and MP3 audio.
-- A/V synchronization.
-- bounded low-memory packet queues.
-- seek with queue flush.
-- 480p and 720p on-device tests.
-- software decode fallback.
-- legacy hardware H.264 only if verified on iPad 1.
+- AAC ve MP3 ses.
+- A/V senkronizasyonu.
+- sınırlı, düşük bellekli paket kuyrukları.
+- kuyruk temizlemeli ileri sarma.
+- cihazda 480p ve 720p testleri.
+- yazılımsal çözmeye geri dönüş.
+- eski donanım H.264 yalnızca iPad 1'de doğrulanırsa.
 
-## P1 — track/subtitle parity
+## P1 — iz/altyazı eşitliği
 
-- multiple audio tracks.
-- embedded SRT.
+- birden fazla ses izi.
+- gömülü SRT.
 - ASS/SSA.
-- embedded subtitle selection.
-- audio delay.
-- subtitle delay.
-- language/title metadata.
-- chapter support.
-- detailed media info.
+- gömülü altyazı seçimi.
+- ses gecikmesi.
+- altyazı gecikmesi.
+- dil/başlık metadata'sı.
+- bölüm desteği.
+- ayrıntılı medya bilgisi.
 
-## P2 — useful legacy format expansion
+## P2 — işe yarar eski format genişlemesi
 
-Only after P0/P1 are stable:
-- AVI container.
+Yalnızca P0/P1 kararlı olduktan sonra:
+- AVI konteyneri.
 - MPEG-4 Part 2 / Xvid.
 - AC3.
 - E-AC3.
-- richer media info: codec, fps, bitrate, dimensions, sample rate, channels.
-- playback speed up to 2.0x.
-- sleep timer.
+- daha zengin medya bilgisi: codec, fps, bit hızı, boyutlar, örnekleme hızı, kanallar.
+- 2.0x'e kadar oynatma hızı.
+- uyku zamanlayıcısı.
 
-## P3 — optional, performance-gated
+## P3 — isteğe bağlı, performansa bağlı
 
-- audio boost.
+- ses yükseltme.
 - deinterlace.
-- post-processing.
+- son işleme.
 
-Do not add these if they harm iPad 1 thermals, memory pressure or playback stability.
+iPad 1'in ısınmasına, bellek baskısına veya oynatma kararlılığına zarar verirlerse bunları ekleme.
 
-## Explicit non-goals for iPad 1
+## iPad 1 için açıkça hedef dışı
 
 - HEVC/H.265
 - AV1
 - VP9
 - 4K
 - HDR
-- modern 10-bit pipelines
+- güncel 10 bit hatlar
 
-## Suite ownership
+## Uygulama ailesi sahipliği
 
-- file management -> iPad1Files
-- downloads -> iPad1Downloader
+- dosya yönetimi -> iPad1Files
+- indirmeler -> iPad1Downloader
 - PDF -> iPad1PDFReader
-- media playback -> iPad1Player
+- medya oynatma -> iPad1Player
 
 
-## Compatibility gate
+## Uyumluluk kapısı
 
-Sector parity never overrides the iPad 1 target.
+Sektörle eşitlik hiçbir zaman iPad 1 hedefinin önüne geçmez.
 
-Before implementation or release, every feature must be checked against `docs/IPAD1_COMPATIBILITY.md`. Features marked `IPAD1_TEST_REQUIRED` require an on-device iPad 1 test; `IPAD1_REJECTED` features are not implemented.
+Yazmadan veya sürüm çıkmadan önce her özellik `docs/IPAD1_COMPATIBILITY.md`'ye göre kontrol edilmelidir. `IPAD1_TEST_REQUIRED` işaretli özellikler cihazda iPad 1 testi gerektirir; `IPAD1_REJECTED` özellikler yazılmaz.
 
 
-## alpha8 engine contract
+## alpha8 motor sözleşmesi
 
-P0 architecture now includes:
-- playback master clock model
-- frame render/wait/drop policy
-- explicit adapter lifecycle
-- track-switching contract
+P0 mimarisi artık şunları içeriyor:
+- oynatma ana saati modeli
+- kare görüntüle/bekle/at politikası
+- açık adaptör yaşam döngüsü
+- iz değiştirme sözleşmesi
 
-This is architecture readiness only. P0 is not complete until real FFmpeg demux/decode and on-device playback tests succeed.
+Bu yalnızca mimari hazırlıktır. Gerçek FFmpeg demux/çözme ve cihazda oynatma testleri başarılı olmadan P0 tamamlanmış sayılmaz.

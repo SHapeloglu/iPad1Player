@@ -1,93 +1,93 @@
 # iPad1Player v0.1-alpha18
 
-Legacy media player for **iPad 1 / iOS 5.1.1 / armv7 / ~256 MB RAM / Objective-C / UIKit / non-ARC/MRC / Theos**.
+**iPad 1 / iOS 5.1.1 / armv7 / ~256 MB RAM / Objective-C / UIKit / non-ARC/MRC / Theos** için eski cihaz medya oynatıcısı.
 
-## Suite responsibility boundary
+## Uygulama ailesi sorumluluk sınırı
 
-iPad1Player only owns **media playback**. It does not duplicate file browsing/management, downloading or PDF reading.
+iPad1Player yalnızca **medya oynatmadan** sorumludur. Dosya gezinme/yönetimi, indirme veya PDF okumayı çoğaltmaz.
 
-- File management -> `iPad1Files`
-- Downloads -> `iPad1Downloader`
-- PDF reading -> `iPad1PDFReader`
-- Video/audio playback -> `iPad1Player`
+- Dosya yönetimi -> `iPad1Files`
+- İndirmeler -> `iPad1Downloader`
+- PDF okuma -> `iPad1PDFReader`
+- Video/ses oynatma -> `iPad1Player`
 
-See `SUITE_HANDOFF.md` and `docs/RESPONSIBILITY.md`.
+Bkz. `SUITE_HANDOFF.md` ve `docs/RESPONSIBILITY.md`.
 
-## Implemented through alpha4
+## alpha4'e kadar yapılanlar
 
-### Native MP4/MOV/M4V playback
-- Apple `MPMoviePlayerController` backend.
-- Play/pause/native seek controls.
-- Resume from last position; completed media clears resume state.
-- Idle sleep disabled during playback.
-- Rotation support.
+### Yerleşik MP4/MOV/M4V oynatma
+- Apple `MPMoviePlayerController` altyapısı.
+- Oynat/duraklat/yerleşik ileri sarma kontrolleri.
+- Son konumdan devam; tamamlanan medya devam durumunu temizler.
+- Oynatma sırasında otomatik uyku kapalı.
+- Döndürme desteği.
 
-### Seeking and comfort
-- Swipe left/right: -10 / +10 seconds.
-- Playback speed cycle: 1.0x, 1.25x, 1.5x, 0.5x.
-- A-B repeat markers and clear action.
-- Control lock.
-- Vertical gesture on left half: brightness.
-- Vertical gesture on right half: volume.
+### İleri sarma ve konfor
+- Sola/sağa kaydırma: -10 / +10 saniye.
+- Oynatma hızı döngüsü: 1.0x, 1.25x, 1.5x, 0.5x.
+- A-B tekrar işaretleri ve temizleme.
+- Kontrol kilidi.
+- Sol yarıda dikey hareket: parlaklık.
+- Sağ yarıda dikey hareket: ses düzeyi.
 
-### Aspect ratio
-- Fit
-- Fill
+### En-boy oranı
+- Sığdır
+- Doldur
 - 4:3
 - 16:9
 - 1.85:1
 - 2.35:1
 
-### External subtitles
-- `.srt` parsing.
-- Automatic sidecar discovery:
+### Harici altyazılar
+- `.srt` ayrıştırma.
+- Yan dosyaları otomatik bulma:
   - `Movie.srt`
   - `Movie-tr.srt`
   - `Movie-en.srt`
   - `Movie.tr.srt`
-- Cycle between matching external subtitle files.
-- Subtitle enable/disable.
-- Timing offset in 0.5 second steps.
-- Font size adjustment.
-- Vertical position adjustment.
-- Encoding cycle:
-  - Automatic
+- Eşleşen harici altyazı dosyaları arasında geçiş.
+- Altyazıyı aç/kapat.
+- 0,5 saniyelik adımlarla zaman kaydırma.
+- Yazı boyutu ayarı.
+- Dikey konum ayarı.
+- Kodlama döngüsü:
+  - Otomatik
   - UTF-8
   - Windows-1254
   - ISO-8859-9
-- Turkish character support.
+- Türkçe karakter desteği.
 
-### Media information
-Native backend displays file/container, resolution, duration and backend type. Codec/track details will be expanded when FFmpeg is linked.
+### Medya bilgisi
+Yerleşik altyapı dosya/konteyner, çözünürlük, süre ve altyapı türünü gösterir. Codec/iz ayrıntıları FFmpeg bağlandığında genişletilecek.
 
-## MKV / FFmpeg backend boundary
+## MKV / FFmpeg altyapı sınırı
 
-`IP1MKVBackend` is now an explicit capability boundary. The UI does not pretend that unavailable FFmpeg-dependent features work.
+`IP1MKVBackend` artık açık bir yetenek sınırıdır. Arayüz, mevcut olmayan FFmpeg bağımlı özellikleri çalışıyormuş gibi göstermez.
 
-Still requiring the real legacy FFmpeg/hybrid backend:
+Hâlâ gerçek eski FFmpeg/hibrit altyapı gerektirenler:
 
-- MKV demux/playback.
-- AAC/MP3 audio decode from MKV.
-- Embedded subtitle tracks.
-- ASS/SSA embedded rendering.
-- Multiple audio track selection.
-- Multiple embedded subtitle track selection.
-- Audio delay.
-- Detailed codec/fps/bitrate diagnostics.
-- Low-memory packet/frame queues.
-- H.264 hybrid/hardware-assisted path research for A4/iOS 5.1.1.
+- MKV demux/oynatma.
+- MKV'den AAC/MP3 ses çözme.
+- Gömülü altyazı izleri.
+- Gömülü ASS/SSA görüntüleme.
+- Birden fazla ses izi seçimi.
+- Birden fazla gömülü altyazı izi seçimi.
+- Ses gecikmesi.
+- Ayrıntılı codec/fps/bit hızı tanılaması.
+- Düşük bellekli paket/kare kuyrukları.
+- A4/iOS 5.1.1 için H.264 hibrit/donanım destekli yol araştırması.
 
-> Important: modern VideoToolbox assumptions must not be used for iOS 5.1.1. Any hardware-assisted H.264 path needs to be implemented and tested against the actual legacy device/API constraints.
+> Önemli: iOS 5.1.1 için güncel VideoToolbox varsayımları kullanılmamalıdır. Donanım destekli her H.264 yolu gerçek eski cihaz/API kısıtlarına göre yazılıp test edilmelidir.
 
-## External launch
+## Dışarıdan açma
 
 ```text
 ipad1player://open?path=<percent-encoded-absolute-local-media-path>
 ```
 
-The player rejects non-media files rather than becoming a file manager.
+Oynatıcı dosya yöneticisine dönüşmek yerine medya olmayan dosyaları reddeder.
 
-## Build
+## Derleme
 
 ```bash
 make clean
@@ -95,220 +95,218 @@ make package FINALPACKAGE=1
 ```
 
 
-## Added in alpha4
+## alpha4'te eklenenler
 
-- Explicit MKV backend lifecycle contract: open/play/pause/stop/seek/time/duration.
-- Track model for video/audio/subtitle streams.
-- Multiple-audio and embedded-subtitle selection fields.
-- Audio/subtitle delay fields in the backend API.
-- Decode mode contract: Automatic / Software / Legacy Hardware.
-- Bounded low-memory packet queue implementation.
-- FFmpeg build hooks kept optional so the project still builds without vendor libraries.
-- MKV pipeline and A/V synchronization design documented in `docs/MKV_BACKEND.md`.
+- Açık MKV altyapı yaşam döngüsü sözleşmesi: aç/oynat/duraklat/durdur/ileri sar/zaman/süre.
+- Video/ses/altyazı akışları için iz modeli.
+- Çoklu ses ve gömülü altyazı seçimi alanları.
+- Altyapı API'sinde ses/altyazı gecikmesi alanları.
+- Çözme modu sözleşmesi: Otomatik / Yazılım / Eski Donanım.
+- Sınırlı, düşük bellekli paket kuyruğu.
+- Proje sağlayıcı kütüphaneler olmadan da derlensin diye FFmpeg derleme kancaları isteğe bağlı tutuldu.
+- MKV hattı ve A/V senkronizasyon tasarımı `docs/MKV_BACKEND.md`'de belgelendi.
 
-### Not falsely claimed as complete
+### Yanlışlıkla tamamlandı denmeyenler
 
-Real MKV playback is **not** marked complete until compatible FFmpeg armv7 libraries and the adapter are linked and tested on the device. Legacy H.264 hardware acceleration is also not declared supported until verified on an actual iPad 1.
+Uyumlu FFmpeg armv7 kütüphaneleri ve adaptör bağlanıp cihazda test edilene kadar gerçek MKV oynatma **tamamlandı olarak işaretlenmez**. Eski H.264 donanım hızlandırması da gerçek bir iPad 1'de doğrulanana kadar desteklenir sayılmaz.
 
 
-## Added in alpha5 — sector-alignment pass
+## alpha5'te eklenenler — sektörle hizalama
 
-- Added a centralized capability/codec matrix in code.
-- Added AVI as a future FFmpeg-backed container without falsely claiming playback support.
-- Added explicit FFmpeg adapter boundary separate from UI and suite routing.
-- Added conservative packet budgets for iPad 1 memory limits.
-- Added seek-flush contract for FFmpeg playback.
-- Added P0/P1/P2/P3 roadmap and codec matrix documentation.
-- Added Tier-1 target codecs: H.264 + AAC/MP3 + SRT/ASS/SSA.
-- Added Tier-2 targets: AVI + MPEG-4 Part 2/Xvid + AC3/E-AC3.
-- Explicitly rejected HEVC/AV1/VP9/4K/HDR for the iPad 1 target.
+- Kodda merkezi yetenek/codec matrisi eklendi.
+- AVI, oynatma desteği varmış gibi gösterilmeden gelecekteki FFmpeg destekli konteyner olarak eklendi.
+- Arayüzden ve uygulama ailesi yönlendirmesinden ayrı, açık bir FFmpeg adaptör sınırı eklendi.
+- iPad 1 bellek sınırları için temkinli paket bütçeleri eklendi.
+- FFmpeg oynatma için ileri sarmada temizleme (seek-flush) sözleşmesi eklendi.
+- P0/P1/P2/P3 yol haritası ve codec matrisi dokümantasyonu eklendi.
+- 1. seviye hedef codec'ler: H.264 + AAC/MP3 + SRT/ASS/SSA.
+- 2. seviye hedefler: AVI + MPEG-4 Part 2/Xvid + AC3/E-AC3.
+- iPad 1 hedefi için HEVC/AV1/VP9/4K/HDR açıkça reddedildi.
 
-See:
+Bkz.:
 - `docs/SECTOR_ROADMAP.md`
 - `docs/CODEC_MATRIX.md`
 
 
-## Added in alpha6
+## alpha6'da eklenenler
 
-- Chapter model and backend contract.
-- Detailed media-info model.
-- Sleep timer API.
-- Expanded playback-speed target set: 0.5x / 0.75x / 1.0x / 1.25x / 1.5x / 2.0x.
-- Sector roadmap updated to place chapters and detailed media info in P1, sleep timer and 2.0x speed in P2.
-- FFmpeg chapter extraction remains backend-gated and is not falsely marked complete.
+- Bölüm (chapter) modeli ve altyapı sözleşmesi.
+- Ayrıntılı medya bilgisi modeli.
+- Uyku zamanlayıcısı API'si.
+- Genişletilmiş oynatma hızı hedefleri: 0.5x / 0.75x / 1.0x / 1.25x / 1.5x / 2.0x.
+- Sektör yol haritası güncellendi: bölümler ve ayrıntılı medya bilgisi P1, uyku zamanlayıcısı ve 2.0x hız P2.
+- FFmpeg bölüm çıkarma altyapıya bağlı kalıyor ve yanlışlıkla tamamlandı diye işaretlenmedi.
 
 
-## Added in alpha7 — iPad 1 optimization & compatibility pass
+## alpha7'de eklenenler — iPad 1 optimizasyon ve uyumluluk
 
-- Subtitle lookup changed from full-list scanning to:
-  - O(1) fast path during normal sequential playback.
-  - O(log n) binary search after seek/jump.
-- Resume persistence interval increased from 5 seconds to 30 seconds.
-- Forced `NSUserDefaults synchronize` removed.
-- Resume state is also saved on app background/termination.
-- Sleep timer is invalidated by the common timer cleanup path.
-- Original screen brightness is restored after leaving playback if the player changed it.
-- Volume gesture now targets the movie player rather than a separate application music player session.
-- Playback-speed list now actually contains 0.5x / 0.75x / 1.0x / 1.25x / 1.5x / 2.0x.
-- Added code-level `IP1CompatibilityGate`.
-- Features are classified as:
+- Altyazı arama tam liste taramasından şuna geçti:
+  - normal sıralı oynatmada O(1) hızlı yol.
+  - ileri sarma/atlama sonrası O(log n) ikili arama.
+- Devam konumu kaydetme aralığı 5 saniyeden 30 saniyeye çıkarıldı.
+- Zorunlu `NSUserDefaults synchronize` kaldırıldı.
+- Devam durumu uygulama arka plana geçince/kapanınca da kaydediliyor.
+- Uyku zamanlayıcısı ortak zamanlayıcı temizlik yolunda iptal ediliyor.
+- Oynatıcı ekran parlaklığını değiştirdiyse oynatmadan çıkınca orijinal parlaklık geri yükleniyor.
+- Ses hareketi artık ayrı bir uygulama müzik çalar oturumunu değil film oynatıcıyı hedefliyor.
+- Oynatma hızı listesi artık gerçekten 0.5x / 0.75x / 1.0x / 1.25x / 1.5x / 2.0x içeriyor.
+- Kod düzeyinde `IP1CompatibilityGate` eklendi.
+- Özellikler şöyle sınıflandırılıyor:
   - `IPAD1_SAFE`
   - `IPAD1_TEST_REQUIRED`
   - `IPAD1_REJECTED`
 
-The project must not claim `IPAD1_TEST_REQUIRED` features as proven until tested on a real iPad 1.
+Proje, `IPAD1_TEST_REQUIRED` özellikleri gerçek bir iPad 1'de test edilmeden kanıtlanmış diye sunmamalıdır.
 
 
-## Added in alpha8 — playback engine contract pass
+## alpha8'de eklenenler — oynatma motoru sözleşmesi
 
-- Added `IP1PlaybackClock`.
-- Added `IP1FramePolicy` with Render / Wait / Drop decisions.
-- FFmpeg adapter lifecycle now includes play/pause/currentTime/duration.
-- Track switching contract now supports audio/subtitle stream selection.
-- MKV backend proxies play/pause/stop/seek and track selection to the adapter.
-- Added explicit A/V master-clock and late-frame-drop architecture.
-- Added `docs/PLAYBACK_ENGINE.md`.
+- `IP1PlaybackClock` eklendi.
+- Render / Bekle / At kararlarıyla `IP1FramePolicy` eklendi.
+- FFmpeg adaptör yaşam döngüsü artık play/pause/currentTime/duration içeriyor.
+- İz değiştirme sözleşmesi artık ses/altyazı akışı seçimini destekliyor.
+- MKV altyapısı oynat/duraklat/durdur/ileri sar ve iz seçimini adaptöre iletiyor.
+- Açık A/V ana saat (master clock) ve geç kalan kareyi atma mimarisi eklendi.
+- `docs/PLAYBACK_ENGINE.md` eklendi.
 
-Real FFmpeg demux/decode is still backend-gated; alpha8 does not falsely claim MKV playback is complete.
-
-
-## Added in alpha9 — constrained FFmpeg parse phase
-
-- Added parse-only FFmpeg contract.
-- Added `IP1FFmpegParseResult`.
-- Added defensive parse policy for iPad 1.
-- Added explicit track/chapter count limits.
-- Added device-test status model.
-- Alpha9 intentionally does not decode video/audio.
-- FFmpeg contexts must be closed immediately after metadata extraction.
-
-See `docs/ALPHA9_PARSE_PHASE.md`.
+Gerçek FFmpeg demux/çözme hâlâ altyapıya bağlı; alpha8 MKV oynatmanın tamamlandığını iddia etmiyor.
 
 
-## Added in alpha10 — iPad 1 hardening
+## alpha9'da eklenenler — sınırlı FFmpeg ayrıştırma aşaması
 
-- Central low-memory budget class.
-- More conservative FFmpeg packet budgets.
-- Queue trimming on memory warning.
-- Player-level low-memory purge.
-- Safe playback-speed profile capped at 1.5x by default.
-- Tighter metadata/track/chapter parse caps.
-- Added `docs/ALPHA10_IPAD1_HARDENING.md`.
+- Yalnızca ayrıştırma yapan FFmpeg sözleşmesi eklendi.
+- `IP1FFmpegParseResult` eklendi.
+- iPad 1 için savunmacı ayrıştırma politikası eklendi.
+- Açık iz/bölüm sayısı sınırları eklendi.
+- Cihaz testi durum modeli eklendi.
+- Alpha9 bilinçli olarak video/ses çözmüyor.
+- FFmpeg bağlamları metadata çıkarıldıktan hemen sonra kapatılmalı.
 
-No new heavy codec feature was added in this pass.
-
-
-## Added in alpha11 — iPad 1 parse runtime gate
-
-- Added parse diagnostics model.
-- Added bounded stream metadata mapper.
-- Added parse duration and media-duration sanity limits.
-- Added `parseAndCloseMediaAtPath` contract.
-- Parse-only backend now explicitly closes state after metadata extraction.
-- Added metadata title/language bounding rules.
-- No decode/render/audio feature was enabled.
-
-See `docs/ALPHA11_PARSE_RUNTIME_GATE.md`.
+Bkz. `docs/ALPHA9_PARSE_PHASE.md`.
 
 
-## Added in alpha12 — FFmpeg pre-integration gate
+## alpha10'da eklenenler — iPad 1 sıkılaştırması
 
-- Added build capability reporting.
-- Added parse-result validation.
-- Added explicit native/FFmpeg fallback policy.
-- Added stricter parse rejection behavior.
-- Added real iPad 1 integration checklist.
-- Still no decode/render/audio enablement.
+- Merkezi düşük bellek bütçesi sınıfı.
+- Daha temkinli FFmpeg paket bütçeleri.
+- Bellek uyarısında kuyruk kırpma.
+- Oynatıcı düzeyinde düşük bellek temizliği.
+- Varsayılan olarak 1.5x ile sınırlı güvenli oynatma hızı profili.
+- Daha sıkı metadata/iz/bölüm ayrıştırma sınırları.
+- `docs/ALPHA10_IPAD1_HARDENING.md` eklendi.
 
-See `docs/ALPHA12_PREINTEGRATION.md`.
-
-
-## Added in alpha13 — iPad 1 robustness
-
-- Added media preflight checks.
-- Added corrupt/implausible metadata rejection.
-- Added bounded repeated parse/close stress-test harness.
-- Added per-iteration autorelease-pool draining for MRC.
-- No decode/audio/render capability enabled.
-
-See `docs/ALPHA13_ROBUSTNESS.md`.
+Bu aşamada yeni ağır codec özelliği eklenmedi.
 
 
-## Added in alpha14 — real libavformat parse source
+## alpha11'de eklenenler — iPad 1 ayrıştırma çalışma zamanı kapısı
 
-When `IP1_FFMPEG_BACKEND` is enabled with compatible armv7 libraries, the adapter now
-uses real libavformat APIs to open a container, enumerate tracks, extract chapters and
-fill media information, then closes the format context immediately.
+- Ayrıştırma tanılama modeli eklendi.
+- Sınırlı akış metadata eşleyicisi eklendi.
+- Ayrıştırma süresi ve medya süresi için makullük sınırları eklendi.
+- `parseAndCloseMediaAtPath` sözleşmesi eklendi.
+- Yalnız ayrıştıran altyapı artık metadata çıkarıldıktan sonra durumu açıkça kapatıyor.
+- Metadata başlık/dil sınırlama kuralları eklendi.
+- Hiçbir çözme/görüntüleme/ses özelliği açılmadı.
 
-- Added old/new FFmpeg stream metadata compatibility helpers.
-- Added actual stream and chapter mapping.
-- Added FFmpeg version information to build report.
-- Added vendor layout documentation.
-- Still no H.264/AAC decode or renderer.
-
-See `docs/ALPHA14_REAL_PARSE.md`.
+Bkz. `docs/ALPHA11_PARSE_RUNTIME_GATE.md`.
 
 
-## Added in alpha15 — Player scope + audio foundation
+## alpha12'de eklenenler — FFmpeg entegrasyon öncesi kapı
 
-- Added code-level suite responsibility gate.
-- Added bounded 256 KB PCM ring buffer.
-- Added conservative iPad 1 audio runtime profile.
-- Added Player-owned audio engine boundary.
-- Explicitly kept Files/PDFReader/Downloader responsibilities out of Player.
-- 480p software H.264 remains test-only; 720p software primary path remains rejected.
+- Derleme yeteneği raporlama eklendi.
+- Ayrıştırma sonucu doğrulaması eklendi.
+- Açık yerleşik/FFmpeg geri dönüş politikası eklendi.
+- Daha sıkı ayrıştırma reddetme davranışı eklendi.
+- Gerçek iPad 1 entegrasyon kontrol listesi eklendi.
+- Hâlâ çözme/görüntüleme/ses açılmadı.
 
-See `docs/ALPHA15_SCOPE_AND_AUDIO.md`.
-
-
-## Added in alpha16 — MKV/H.264 iPad 1 policy
-
-- MKV/H.264 playback is now explicitly a Player responsibility.
-- Added central H.264 decode decision policy.
-- 360p/480p software decode is the intended test target.
-- 720p software decode is rejected as a primary path.
-- 720p is allowed only through a verified legacy hardware/hybrid path.
-- Added video decode capability reporting.
-
-No unsupported decoder was enabled.
-
-See `docs/ALPHA16_H264_POLICY.md`.
+Bkz. `docs/ALPHA12_PREINTEGRATION.md`.
 
 
-## Added in alpha17 — low-memory audio runtime
+## alpha13'te eklenenler — iPad 1 sağlamlığı
 
-- Added iOS 5-compatible AudioQueue PCM output.
-- Added 3 x 16 KB AudioQueue buffers.
-- Retained bounded 256 KB PCM ring buffer.
-- Added FFmpeg AAC/MP3 decoder source behind backend flag.
-- Added old/new FFmpeg audio decode branches.
-- Non-S16 sample formats remain gated pending swresample testing.
-- No suite responsibility leakage.
+- Medya ön kontrolleri eklendi.
+- Bozuk/makul olmayan metadata reddi eklendi.
+- Sınırlı tekrarlı ayrıştır/kapat yük testi düzeneği eklendi.
+- MRC için her döngüde autorelease pool boşaltma eklendi.
+- Çözme/ses/görüntüleme yeteneği açılmadı.
 
-See `docs/ALPHA17_AUDIO_RUNTIME.md`.
+Bkz. `docs/ALPHA13_ROBUSTNESS.md`.
 
 
-## Added in alpha18 — end-to-end audio loop
+## alpha14'te eklenenler — gerçek libavformat ayrıştırma kaynağı
 
-- Added selected-stream `av_read_frame` loop.
-- Added single low-memory audio demux thread.
-- Wired AAC/MP3 decoder to bounded PCM ring and AudioQueue.
-- Added PCM backpressure before decoding more packets.
-- Added audio master-clock progression from accepted PCM bytes.
-- Added explicit MKV backend audio-runtime entry points.
-- No video decode was enabled.
+`IP1_FFMPEG_BACKEND` uyumlu armv7 kütüphaneleriyle açıldığında adaptör artık bir konteyneri açmak, izleri listelemek, bölümleri çıkarmak ve medya bilgisini doldurmak için gerçek libavformat API'lerini kullanıyor; ardından format bağlamını hemen kapatıyor.
 
-See `docs/ALPHA18_AUDIO_LOOP.md`.
+- Eski/yeni FFmpeg akış metadata uyumluluk yardımcıları eklendi.
+- Gerçek akış ve bölüm eşlemesi eklendi.
+- Derleme raporuna FFmpeg sürüm bilgisi eklendi.
+- Sağlayıcı (vendor) klasör düzeni dokümantasyonu eklendi.
+- Hâlâ H.264/AAC çözme veya görüntüleyici yok.
+
+Bkz. `docs/ALPHA14_REAL_PARSE.md`.
 
 
-## Development Documentation
+## alpha15'te eklenenler — Player kapsamı + ses temeli
 
-Development and handoff documents:
+- Kod düzeyinde uygulama ailesi sorumluluk kapısı eklendi.
+- Sınırlı 256 KB PCM halka tampon eklendi.
+- Temkinli iPad 1 ses çalışma zamanı profili eklendi.
+- Player'a ait ses motoru sınırı eklendi.
+- Files/PDFReader/Downloader sorumlulukları açıkça Player'ın dışında tutuldu.
+- 480p yazılımsal H.264 yalnızca test aşamasında; 720p yazılımsal birincil yol reddedilmiş olarak kalıyor.
 
-- `PROJECT_CONTEXT.md` — authoritative current project state
-- `ARCHITECTURE.md` — playback and threading architecture
-- `SESSION.md` — latest real-device development session
-- `TASK.md` — immediate development tasks
-- `BACKLOG.md` — prioritized future work
-- `SUITE_HANDOFF.md` — suite integration and responsibility handoff
-- `docs/RESPONSIBILITY.md` — application responsibility boundaries
+Bkz. `docs/ALPHA15_SCOPE_AND_AUDIO.md`.
+
+
+## alpha16'da eklenenler — MKV/H.264 iPad 1 politikası
+
+- MKV/H.264 oynatma artık açıkça Player'ın sorumluluğu.
+- Merkezi H.264 çözme karar politikası eklendi.
+- Hedeflenen test 360p/480p yazılımsal çözme.
+- 720p yazılımsal çözme birincil yol olarak reddedildi.
+- 720p yalnızca doğrulanmış eski donanım/hibrit yolla izinli.
+- Video çözme yeteneği raporlama eklendi.
+
+Desteklenmeyen hiçbir çözücü açılmadı.
+
+Bkz. `docs/ALPHA16_H264_POLICY.md`.
+
+
+## alpha17'de eklenenler — düşük bellekli ses çalışma zamanı
+
+- iOS 5 uyumlu AudioQueue PCM çıkışı eklendi.
+- 3 x 16 KB AudioQueue tamponu eklendi.
+- Sınırlı 256 KB PCM halka tampon korundu.
+- Altyapı bayrağının arkasında FFmpeg AAC/MP3 çözücü kaynağı eklendi.
+- Eski/yeni FFmpeg ses çözme dalları eklendi.
+- S16 dışı örnek formatları swresample testi bekleniyor olarak kapalı kaldı.
+- Uygulama ailesi sorumluluk sızıntısı yok.
+
+Bkz. `docs/ALPHA17_AUDIO_RUNTIME.md`.
+
+
+## alpha18'de eklenenler — uçtan uca ses döngüsü
+
+- Seçilen akış için `av_read_frame` döngüsü eklendi.
+- Tek, düşük bellekli ses demux iş parçacığı eklendi.
+- AAC/MP3 çözücü sınırlı PCM halka tampon ve AudioQueue'ya bağlandı.
+- Daha fazla paket çözmeden önce PCM geri basıncı (backpressure) eklendi.
+- Kabul edilen PCM baytlarına göre ilerleyen ses ana saati eklendi.
+- Açık MKV altyapısı ses çalışma zamanı giriş noktaları eklendi.
+- Video çözme açılmadı.
+
+Bkz. `docs/ALPHA18_AUDIO_LOOP.md`.
+
+
+## Geliştirme dokümantasyonu
+
+Geliştirme ve devir belgeleri:
+
+- `PROJECT_CONTEXT.md` — belirleyici güncel proje durumu
+- `ARCHITECTURE.md` — oynatma ve iş parçacığı mimarisi
+- `SESSION.md` — son gerçek cihaz geliştirme oturumu
+- `TASK.md` — hemen yapılacak geliştirme görevleri
+- `BACKLOG.md` — önceliklendirilmiş gelecek işler
+- `SUITE_HANDOFF.md` — uygulama ailesi entegrasyonu ve sorumluluk devri
+- `docs/RESPONSIBILITY.md` — uygulama sorumluluk sınırları

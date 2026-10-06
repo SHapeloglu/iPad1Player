@@ -1,108 +1,108 @@
-# iPad1Player — Project Context
+# iPad1Player — Proje Bağlamı
 
-> This document is the authoritative handoff document for continuing development.
+> Bu doküman geliştirmeye devam etmek için belirleyici devir belgesidir.
 
-## Project
+## Proje
 
-iPad1Player is a media player designed specifically for:
+iPad1Player özellikle şunlar için tasarlanmış bir medya oynatıcıdır:
 
 - iPad 1
 - iOS 5.1.1
 - armv7
-- approximately 256 MB RAM
+- yaklaşık 256 MB RAM
 - Objective-C / UIKit
-- non-ARC / manual retain-release
+- non-ARC / manuel retain-release
 - Theos
-- legacy iPhoneOS 6.1 SDK
+- eski iPhoneOS 6.1 SDK
 
-The project intentionally targets hardware and operating-system constraints that modern media players no longer support.
+Proje bilinçli olarak güncel medya oynatıcıların artık desteklemediği donanım ve işletim sistemi kısıtlarını hedefler.
 
-## Suite Responsibility
+## Uygulama ailesi sorumlulukları
 
-iPad1Player is one application in the legacy iPad 1 application suite.
+iPad1Player, eski iPad 1 uygulama ailesinin bir parçasıdır.
 
-Responsibilities:
+Sorumluluklar:
 
 - iPad1Files
-  - file browsing
-  - search
-  - sort
-  - favorites
-  - copy/move/delete/rename
-  - folders
-  - archives
-  - file information
+  - dosya gezinme
+  - arama
+  - sıralama
+  - favoriler
+  - kopyala/taşı/sil/yeniden adlandır
+  - klasörler
+  - arşivler
+  - dosya bilgisi
 
 - iPad1Downloader
-  - HTTP/HTTPS/FTP downloads
-  - queue
-  - progress
-  - resume
-  - retry
+  - HTTP/HTTPS/FTP indirmeleri
+  - kuyruk
+  - ilerleme
+  - devam ettirme
+  - yeniden deneme
 
 - iPad1PDFReader
-  - PDF rendering
-  - navigation
-  - reading
-  - PDF bookmarks
+  - PDF görüntüleme
+  - gezinme
+  - okuma
+  - PDF yer imleri
 
 - iPad1Player
   - demux
-  - audio/video decode
-  - audio/video output
-  - A/V synchronization
-  - seek
-  - resume
-  - playback controls
-  - subtitles
-  - track selection
-  - delay controls
-  - chapters
-  - media information
-  - playback diagnostics
-  - codec compatibility
-  - memory-safe buffering
+  - ses/video çözme
+  - ses/video çıkışı
+  - A/V senkronizasyonu
+  - ileri sarma
+  - devam ettirme
+  - oynatma kontrolleri
+  - altyazılar
+  - iz seçimi
+  - gecikme ayarları
+  - bölümler
+  - medya bilgisi
+  - oynatma tanılaması
+  - codec uyumluluğu
+  - bellek güvenli tamponlama
 
-Do not move file-manager, downloader or PDF-reader responsibilities into iPad1Player.
+Dosya yöneticisi, indirici veya PDF okuyucu sorumluluklarını iPad1Player'a taşıma.
 
-See:
+Bkz.:
 
 - `SUITE_HANDOFF.md`
 - `docs/RESPONSIBILITY.md`
 
-## URL Scheme
+## URL scheme
 
-Player open URL:
+Player açma adresi:
 
     ipad1player://open?path=<percent-encoded-local-path>
 
-The local path is supplied by another suite application such as iPad1Files.
+Yerel yolu iPad1Files gibi uygulama ailesindeki başka bir uygulama sağlar.
 
-## Current Verified Playback State
+## Doğrulanmış güncel oynatma durumu
 
-Real iPad 1 device testing has verified:
+Gerçek iPad 1 cihaz testlerinde doğrulananlar:
 
-- MKV container parsing
+- MKV konteyner ayrıştırma
 - FFmpeg demux
-- AAC audio decode
-- swresample conversion
-- 44.1 kHz stereo signed 16-bit PCM output
-- AudioQueue playback
-- H.264 software decode at 854x480
-- YUV420P AVFrame output
-- OpenGL ES 2 YUV renderer
-- Y/U/V texture upload
-- shader-based YUV to RGB conversion
-- CAEAGLLayer presentation
-- simultaneous audio and video playback
-- bounded compressed-video packet queue
-- dedicated H.264 video decode worker
-- one and only one `av_read_frame` demux reader
-- persistent SwrContext
-- latest-frame renderer backpressure
-- stable 480p test playback without the earlier micro-freezes
+- AAC ses çözme
+- swresample dönüşümü
+- 44.1 kHz stereo işaretli 16 bit PCM çıkışı
+- AudioQueue ile oynatma
+- 854x480'de H.264 yazılımsal çözme
+- YUV420P AVFrame çıkışı
+- OpenGL ES 2 YUV görüntüleyici
+- Y/U/V doku yükleme
+- shader tabanlı YUV'dan RGB'ye dönüşüm
+- CAEAGLLayer sunumu
+- eşzamanlı ses ve video oynatma
+- sınırlı sıkıştırılmış video paket kuyruğu
+- ayrılmış H.264 video çözme işçisi
+- tek ve yalnızca tek `av_read_frame` demux okuyucusu
+- kalıcı SwrContext
+- en son kareyi tutan görüntüleyici geri basıncı
+- önceki mikro donmalar olmadan kararlı 480p test oynatması
 
-Real-device test profile:
+Gerçek cihaz test profili:
 
 - H.264 Main
 - 854x480
@@ -112,35 +112,35 @@ Real-device test profile:
 - stereo
 - MKV
 
-## Codec Policy
+## Codec politikası
 
-### Supported / targeted
+### Desteklenen / hedeflenen
 
-- H.264 software decode up to 854x480:
+- 854x480'e kadar H.264 yazılımsal çözme:
   `IPAD1_TEST_REQUIRED`
 
 - AAC
 - MP3
 - MKV demux
-- AVI demux where compatible
-- native MP4/MOV/M4V path through legacy MediaPlayer where appropriate
+- uyumlu olduğu yerde AVI demux
+- uygun olduğu yerde eski MediaPlayer üzerinden yerleşik MP4/MOV/M4V yolu
 
-### Not targeted
+### Hedeflenmeyen
 
 - HEVC / H.265
 - AV1
 - VP9
 - 4K
 - HDR
-- 10-bit video
-- heavy ASS rendering
-- modern hardware-only formats
+- 10 bit video
+- ağır ASS görüntüleme
+- yalnız güncel donanımda çalışan formatlar
 
-H.264 720p software remains rejected.
+H.264 720p yazılımsal çözme reddedilmiş olarak kalır.
 
-## Playback Architecture
+## Oynatma mimarisi
 
-Current architecture:
+Güncel mimari:
 
     AVFormatContext
           |
@@ -174,62 +174,62 @@ Current architecture:
                    v
              OpenGL ES 2
 
-There must never be two independent `av_read_frame` readers for the same playback session.
+Aynı oynatma oturumu için asla iki bağımsız `av_read_frame` okuyucusu olmamalıdır.
 
-## Important Current Limitations
+## Önemli güncel sınırlamalar
 
-The current playback implementation is not considered feature complete.
+Güncel oynatma uygulaması özellik açısından tamamlanmış sayılmaz.
 
-Still missing or incomplete:
+Hâlâ eksik veya yarım olanlar:
 
-- real A/V synchronization
-- video PTS scheduling
-- true AudioQueue presentation clock
-- robust seek/flush
-- EOF handling
-- clean end-of-playback state
-- long-duration stability validation
-- production subtitle integration with FFmpeg playback
-- embedded subtitle selection
-- audio-track switching
-- complete pause/resume semantics
-- proper frame-drop policy based on timing
-- diagnostics cleanup
-- thread-safe PCM ring-buffer implementation
-- removal of AudioQueue KVC access
-- FFmpeg adapter general playback path
+- gerçek A/V senkronizasyonu
+- video PTS zamanlaması
+- gerçek AudioQueue sunum saati
+- sağlam ileri sarma/temizleme
+- dosya sonu (EOF) işleme
+- temiz oynatma sonu durumu
+- uzun süreli kararlılık doğrulaması
+- FFmpeg oynatmayla üretim düzeyinde altyazı entegrasyonu
+- gömülü altyazı seçimi
+- ses izi değiştirme
+- tam duraklat/devam davranışı
+- zamanlamaya dayalı uygun kare atma politikası
+- tanılama kodunun temizlenmesi
+- iş parçacığı güvenli PCM halka tamponu
+- AudioQueue KVC erişiminin kaldırılması
+- FFmpeg adaptörünün genel oynatma yolu
 
-## Current Priority
+## Güncel öncelik
 
-Immediate next action:
+Hemen yapılacak sonraki adım:
 
-Implement timestamp-aware A/V synchronization using:
+Şunları kullanarak zaman damgasına duyarlı A/V senkronizasyonu yaz:
 
-- audio as master clock
+- ana saat olarak ses
 - video PTS
-- bounded video scheduling
-- controlled late-frame dropping
+- sınırlı video zamanlaması
+- kontrollü geç kare atma
 
-Do not begin unrelated features before the playback timing path is stable.
+Oynatma zamanlama yolu kararlı olmadan ilgisiz özelliklere başlama.
 
-## Real Device
+## Gerçek cihaz
 
-Development/testing device:
+Geliştirme/test cihazı:
 
 - iPad 1
 - iOS 5.1.1
 - armv7
 
-Legacy SSH requires ssh-rsa compatibility options.
+Eski SSH, ssh-rsa uyumluluk seçeneklerini gerektirir.
 
-## Development Rule
+## Geliştirme kuralı
 
-For every feature:
+Her özellik için:
 
-1. Apply suite responsibility filter.
-2. Check iPad 1 CPU/RAM impact.
-3. Prefer bounded memory.
-4. Avoid unbounded queues.
-5. Avoid unnecessary copies.
-6. Test on the real iPad.
-7. Do not mark a feature working solely because it compiles.
+1. Uygulama ailesi sorumluluk filtresini uygula.
+2. iPad 1 CPU/RAM etkisini kontrol et.
+3. Sınırlı belleği tercih et.
+4. Sınırsız kuyruklardan kaçın.
+5. Gereksiz kopyalardan kaçın.
+6. Gerçek iPad'de test et.
+7. Bir özelliği yalnızca derlendiği için çalışıyor diye işaretleme.

@@ -1,55 +1,50 @@
-# Alpha14 — Real libavformat Parse Path
+# Alpha14 — Gerçek libavformat Ayrıştırma Yolu
 
-Alpha14 replaces the FFmpeg parse stub with a real libavformat parse implementation
-when `IP1_FFMPEG_BACKEND` is enabled.
+Alpha14, `IP1_FFMPEG_BACKEND` açıkken FFmpeg ayrıştırma taslağını gerçek bir libavformat ayrıştırma uygulamasıyla değiştirir.
 
-## Real API path
+## Gerçek API yolu
 
 - `avformat_open_input`
 - `avformat_find_stream_info`
-- stream enumeration
+- akışları listeleme
 - `avcodec_get_name`
-- stream language/title metadata
-- container name
-- duration / bitrate
-- video width / height / FPS
-- audio sample rate / channels
-- chapter extraction
+- akış dil/başlık metadata'sı
+- konteyner adı
+- süre / bit hızı
+- video genişlik / yükseklik / FPS
+- ses örnekleme hızı / kanallar
+- bölüm çıkarma
 - `avformat_close_input`
 
-## Legacy FFmpeg compatibility
+## Eski FFmpeg uyumluluğu
 
-`IP1FFmpegCompat.h` hides the old `AVStream.codec` versus newer
-`AVStream.codecpar` difference.
+`IP1FFmpegCompat.h`, eski `AVStream.codec` ile yeni `AVStream.codecpar` arasındaki farkı gizler.
 
-This lets the project test a legacy FFmpeg build appropriate for iOS 5.1.1
-without coupling the player code to only a modern FFmpeg API.
+Bu sayede proje, oynatıcı kodunu yalnızca güncel FFmpeg API'sine bağlamadan iOS 5.1.1'e uygun eski bir FFmpeg derlemesini test edebilir.
 
-## iPad 1 rules preserved
+## Korunan iPad 1 kuralları
 
-Parse-only mode:
-- opens no decoder
-- starts no decoder threads
-- queues no packets
-- allocates no decoded frames
-- closes `AVFormatContext` before return
+Yalnız ayrıştırma modu:
+- hiçbir çözücü açmaz
+- hiçbir çözücü iş parçacığı başlatmaz
+- hiçbir paketi kuyruğa almaz
+- hiçbir çözülmüş kare ayırmaz
+- dönmeden önce `AVFormatContext`'i kapatır
 
-Existing limits remain active:
-- max 24 tracks
-- max 128 chapters
-- metadata validation
-- corrupt-file preflight
-- parse diagnostics
-- repeated parse/close test harness
+Mevcut sınırlar geçerliliğini korur:
+- en fazla 24 iz
+- en fazla 128 bölüm
+- metadata doğrulaması
+- bozuk dosya ön kontrolü
+- ayrıştırma tanılaması
+- tekrarlı ayrıştır/kapat test düzeneği
 
-## Important
+## Önemli
 
-The source code now contains a real libavformat parse path, but the ZIP intentionally
-does not ship FFmpeg static libraries.
+Kaynak kod artık gerçek bir libavformat ayrıştırma yolu içeriyor, ancak ZIP paketi bilinçli olarak FFmpeg statik kütüphanelerini içermiyor.
 
-Therefore:
-- build without `IP1_FFMPEG_BACKEND` remains functional for native player paths
-- real MKV metadata parsing becomes active only after compatible armv7 static FFmpeg
-  libraries are supplied and the build flag is enabled
+Bu yüzden:
+- `IP1_FFMPEG_BACKEND` olmadan derleme, yerleşik oynatıcı yolları için çalışır durumda kalır
+- gerçek MKV metadata ayrıştırması ancak uyumlu armv7 statik FFmpeg kütüphaneleri sağlanıp derleme bayrağı açıldığında devreye girer
 
-No video/audio decoding is enabled in alpha14.
+alpha14'te video/ses çözme açılmadı.

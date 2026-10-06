@@ -1,10 +1,10 @@
-# iPad1 Suite Responsibility Handoff Log
+# iPad1 Uygulama Ailesi Sorumluluk Devir Günlüğü
 
-Bu belge, **iPad1Player** geliştirilirken Player kapsamı dışında bırakılan işleri ve bu işlerin hangi iPad1 Suite uygulamasına yönlendirileceğini tanımlar.
+Bu belge, **iPad1Player** geliştirilirken Player kapsamı dışında bırakılan işleri ve bu işlerin iPad1 uygulama ailesinde hangi uygulamaya yönlendirileceğini tanımlar.
 
 ## Temel Kural
 
-Bir özellik başka bir iPad1 Suite uygulamasının ana sorumluluğundaysa, **iPad1Player içinde yeniden geliştirilmez**. Kullanıcı uygun uygulamaya yönlendirilir.
+Bir özellik iPad1 uygulama ailesindeki başka bir uygulamanın ana sorumluluğundaysa, **iPad1Player içinde yeniden geliştirilmez**. Kullanıcı uygun uygulamaya yönlendirilir.
 
 ---
 
@@ -68,7 +68,7 @@ Bir medya URL'si indirilmek istenirse Downloader'a yönlendirilir.
 ipad1downloader://download?url=http://example.com/video.mp4
 ```
 
-Not: Player ileride HTTP streaming desteklerse bu yalnızca **oynatma** sorumluluğunda değerlendirilmelidir; dosyayı kalıcı olarak indirme yine Downloader'ın görevidir.
+Not: Player ileride HTTP akışı (streaming) desteklerse bu yalnızca **oynatma** sorumluluğunda değerlendirilmelidir; dosyayı kalıcı olarak indirme yine Downloader'ın görevidir.
 
 ---
 
@@ -78,10 +78,10 @@ Aşağıdaki özellikler **iPad1PDFReader** sorumluluğundadır:
 
 - PDF görüntüleme
 - PDF sayfa navigasyonu
-- PDF zoom / fit işlemleri
-- PDF text reader modu
+- PDF yakınlaştırma / sığdırma işlemleri
+- PDF metin okuma modu
 - PDF içeriğini okuma
-- PDF bookmark / okuma konumu
+- PDF yer imi / okuma konumu
 - PDF'ye özel görüntüleme araçları
 
 ### Player davranışı
@@ -106,34 +106,34 @@ Aşağıdaki işler doğrudan **iPad1Player** kapsamındadır:
 - MP4 oynatma
 - MOV oynatma
 - M4V oynatma
-- Video decode / playback pipeline
-- H.264 hardware decode entegrasyonu
-- AAC / MP3 audio playback
+- Video çözme / oynatma hattı
+- H.264 donanım çözme entegrasyonu
+- AAC / MP3 ses oynatma
 - Harici SRT altyazı
 - MKV içi gömülü altyazı
 - SRT / ASS / SSA altyazı desteği
 - Altyazı aç / kapat
 - Altyazı track seçimi
 - Ses track seçimi
-- Subtitle delay
-- Audio delay
-- Play / pause
-- Seek
+- Altyazı gecikmesi
+- Ses gecikmesi
+- Oynat / duraklat
+- İleri/geri sarma
 - +/- 10 saniye ileri / geri
-- Resume playback
-- Playback speed
-- Aspect Fit / Fill
-- Fullscreen
-- Orientation
+- Kaldığı yerden devam
+- Oynatma hızı
+- En-boy Sığdır / Doldur
+- Tam ekran
+- Ekran yönü
 - Oynatma sırasında ekran uykusunu engelleme
 - Codec uyumluluk / hata mesajları
-- iPad 1 RAM / CPU sınırlarına uygun buffer yönetimi
+- iPad 1 RAM / CPU sınırlarına uygun tampon yönetimi
 
 ---
 
 ## 5. Uygulamalar Arası URL Scheme Standardı
 
-Suite içinde önerilen URL scheme isimleri:
+Uygulama ailesi içinde önerilen URL scheme adları:
 
 ```text
 ipad1files://
@@ -157,7 +157,7 @@ URL parametreleri uygulanırken yüzde kodlama yapılmalıdır.
 
 ## 6. Önerilen Ortak Router
 
-Suite genelinde tekrar kullanılabilecek sınıf:
+Uygulama ailesi genelinde tekrar kullanılabilecek sınıf:
 
 ```text
 IP1SuiteRouter
@@ -186,7 +186,7 @@ Amaç: Her uygulamanın kendi sorumluluk alanını koruması ve başka bir uygul
 
 ---
 
-## 7. Geliştirme Öncesi Suite Responsibility Filtresi
+## 7. Geliştirme Öncesi Uygulama Ailesi Sorumluluk Filtresi
 
 Her yeni özellik eklenmeden önce aşağıdaki sıra izlenmelidir:
 
@@ -194,35 +194,35 @@ Her yeni özellik eklenmeden önce aşağıdaki sıra izlenmelidir:
 2. Dosya yönetimi ise iPad1Files'a yönlendir.
 3. İndirme ise iPad1Downloader'a yönlendir.
 4. PDF okuma/görüntüleme ise iPad1PDFReader'a yönlendir.
-5. Başka suite uygulamasının kapsamına giriyorsa Player'a ekleme.
+5. Ailedeki başka bir uygulamanın kapsamına giriyorsa Player'a ekleme.
 6. Sadece Player'ın ana görevi ise iPad1Player içinde uygula.
 
 ---
 
-## 8. Güncel Handoff Durumu
+## 8. Güncel Devir Durumu
 
-### iPad1Files backlog / handoff
+### iPad1Files iş havuzu / devir
 - Player içinden dosya gezme eklenmeyecek.
 - Player içinden silme / taşıma / yeniden adlandırma eklenmeyecek.
 - Player içinden ZIP / arşiv işlemi eklenmeyecek.
 - Medya dosyasını bulma işi iPad1Files'ta kalacak.
 - iPad1Files uygun medya türlerinde `ipad1player://open?...` çağrısı yapabilecek.
 
-### iPad1Downloader backlog / handoff
-- Player içine download manager eklenmeyecek.
+### iPad1Downloader iş havuzu / devir
+- Player içine indirme yöneticisi eklenmeyecek.
 - Kalıcı HTTP / FTP indirme Downloader'da kalacak.
-- Downloader indirme tamamlandığında isteğe bağlı olarak Player'a handoff yapabilecek.
+- Downloader indirme tamamlandığında isteğe bağlı olarak Player'a devir yapabilecek.
 
-### iPad1PDFReader backlog / handoff
-- Player içine PDF preview / reader eklenmeyecek.
+### iPad1PDFReader iş havuzu / devir
+- Player içine PDF önizleme / okuyucu eklenmeyecek.
 - `.pdf` dosyaları PDFReader'a yönlendirilecek.
-- PDF metin okuma / bookmark / reader modu PDFReader'da kalacak.
+- PDF metin okuma / yer imi / okuma modu PDFReader'da kalacak.
 
 ---
 
 ## Sonuç
 
-Suite görev ayrımı:
+Uygulama ailesi görev ayrımı:
 
 ```text
 Dosyayı bul / yönet      -> iPad1Files
@@ -235,24 +235,24 @@ Bu ayrım iPad 1'in düşük RAM ve CPU kaynakları açısından da önemlidir; 
 
 ---
 
-## 9. alpha3 Rakip Analizi Sonrası Handoff Güncellemesi
+## 9. alpha3 Rakip Analizi Sonrası Devir Güncellemesi
 
-Player'a yalnızca oynatma ile doğrudan ilgili özellikler eklendi: aspect presets, playback speed, A-B repeat, brightness/volume gesture, control lock, çoklu harici SRT keşfi, subtitle encoding/boyut/konum ve media info.
+Player'a yalnızca oynatma ile doğrudan ilgili özellikler eklendi: en-boy ön ayarları, oynatma hızı, A-B tekrar, parlaklık/ses hareketleri, kontrol kilidi, çoklu harici SRT keşfi, altyazı kodlaması/boyutu/konumu ve medya bilgisi.
 
 Rakiplerde bulunan aşağıdaki özellikler Player'a **bilerek eklenmedi**:
 
-- Yerel dosya browser / rename / copy / move / delete / archive -> iPad1Files
-- Download manager / HTTP-FTP kalıcı indirme -> iPad1Downloader
-- PDF preview / reader / bookmark -> iPad1PDFReader
+- Yerel dosya gezgini / yeniden adlandır / kopyala / taşı / sil / arşiv -> iPad1Files
+- İndirme yöneticisi / HTTP-FTP kalıcı indirme -> iPad1Downloader
+- PDF önizleme / okuyucu / yer imi -> iPad1PDFReader
 
-MKV embedded track/audio delay özellikleri Player sorumluluğunda kalır ancak gerçek FFmpeg backend gelmeden kullanıcıya çalışıyormuş gibi sunulmaz.
+MKV gömülü iz / ses gecikmesi özellikleri Player sorumluluğunda kalır ancak gerçek FFmpeg backend gelmeden kullanıcıya çalışıyormuş gibi sunulmaz.
 
 
-## Alpha15 code-level enforcement
+## Alpha15 kod düzeyinde denetim
 
-`IP1SuiteScopeGate` was added to keep Player from absorbing responsibilities from:
+Player'ın şu uygulamaların sorumluluklarını üstlenmesini engellemek için `IP1SuiteScopeGate` eklendi:
 - iPad1Files
 - iPad1PDFReader
 - iPad1Downloader
 
-The gate should be consulted before future Player feature work.
+Gelecekteki Player özellik çalışmalarından önce bu kapıya bakılmalıdır.

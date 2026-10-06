@@ -1,8 +1,8 @@
-# Playback Engine Contract — alpha8
+# Oynatma Motoru Sözleşmesi — alpha8
 
-## P0 lifecycle
+## P0 yaşam döngüsü
 
-The FFmpeg-backed engine now has explicit lifecycle methods:
+FFmpeg destekli motorun artık açık yaşam döngüsü metotları var:
 
 1. `open`
 2. `play`
@@ -10,70 +10,70 @@ The FFmpeg-backed engine now has explicit lifecycle methods:
 4. `seek`
 5. `close`
 
-The adapter owns:
-- bounded video packet queue
-- bounded audio packet queue
-- playback clock
-- track list
-- chapter list
-- media info
+Adaptörün sorumlulukları:
+- sınırlı video paket kuyruğu
+- sınırlı ses paket kuyruğu
+- oynatma saati
+- iz listesi
+- bölüm listesi
+- medya bilgisi
 
-The source remains buildable without FFmpeg.
+Kaynak FFmpeg olmadan da derlenebilir kalır.
 
-## A/V clock
+## A/V saati
 
-Preferred master:
-1. audio clock when audio exists
-2. video clock when there is no audio
-3. external clock only for exceptional cases
+Tercih edilen ana saat:
+1. ses varsa ses saati
+2. ses yoksa video saati
+3. yalnızca istisnai durumlarda harici saat
 
-`IP1PlaybackClock` centralizes time state.
+`IP1PlaybackClock` zaman durumunu merkezileştirir.
 
-## Frame scheduling
+## Kare zamanlaması
 
-`IP1FramePolicy` returns:
-- Render
-- Wait
-- Drop
+`IP1FramePolicy` şunları döndürür:
+- Render (görüntüle)
+- Wait (bekle)
+- Drop (at)
 
-Policy:
-- frame too early -> wait briefly
-- frame on time -> render
-- frame too late -> drop
+Politika:
+- kare çok erken -> kısa bekle
+- kare zamanında -> görüntüle
+- kare çok geç -> at
 
-This prevents latency and memory growth on iPad 1.
+Bu, iPad 1'de gecikmeyi ve bellek büyümesini önler.
 
-Recommended initial thresholds for device testing:
-- early tolerance: ~20 ms
-- late tolerance: ~80–120 ms
+Cihaz testi için önerilen başlangıç eşikleri:
+- erken toleransı: ~20 ms
+- geç toleransı: ~80–120 ms
 
-These are test values, not guaranteed final constants.
+Bunlar test değerleridir, garanti edilmiş nihai sabitler değildir.
 
-## Seek
+## İleri sarma
 
-Seek must:
-1. pause demux/decode work
-2. flush compressed packet queues
-3. flush decoded frame/audio buffers
-4. seek demuxer to keyframe
-5. reset playback clocks
-6. resume decode
+İleri sarma şunları yapmalıdır:
+1. demux/çözme işini duraklat
+2. sıkıştırılmış paket kuyruklarını temizle
+3. çözülmüş kare/ses tamponlarını temizle
+4. demux'u anahtar kareye konumlandır
+5. oynatma saatlerini sıfırla
+6. çözmeye devam et
 
-The current adapter already exposes the queue-flush contract.
+Güncel adaptör kuyruk temizleme sözleşmesini zaten sunuyor.
 
-## Track switching
+## İz değiştirme
 
-The adapter contract supports:
-- select audio stream by stream index
-- select subtitle stream by stream index
-- subtitle off using stream index `-1`
+Adaptör sözleşmesi şunları destekler:
+- ses akışını akış numarasıyla seçme
+- altyazı akışını akış numarasıyla seçme
+- akış numarası `-1` ile altyazıyı kapatma
 
-Real codec flush/reopen behavior is implemented only when FFmpeg is linked.
+Gerçek codec temizleme/yeniden açma davranışı yalnızca FFmpeg bağlandığında uygulanır.
 
-## iPad 1 limits
+## iPad 1 sınırları
 
-Never:
-- use an unbounded queue
-- cache the full media file
-- use 720p software H.264 as the primary path
-- claim legacy hardware H.264 without real-device verification
+Asla:
+- sınırsız kuyruk kullanma
+- medya dosyasının tamamını önbelleğe alma
+- birincil yol olarak yazılımsal 720p H.264 kullanma
+- gerçek cihaz doğrulaması olmadan eski donanım H.264 iddia etme

@@ -1,28 +1,28 @@
-# Codec / Container Matrix
+# Codec / Konteyner Matrisi
 
-Legend:
-- READY = implemented today
-- BACKEND = architecture exists; FFmpeg runtime required
-- P2 = planned after MKV core is stable
-- OUT = intentionally out of scope for iPad 1
+Açıklama:
+- READY = bugün yapılmış
+- BACKEND = mimari hazır; FFmpeg çalışma zamanı gerekli
+- P2 = MKV çekirdeği kararlı olduktan sonra planlanıyor
+- OUT = iPad 1 için bilinçli olarak kapsam dışı
 
-| Type | Format | Status |
+| Tür | Format | Durum |
 |---|---|---|
-| Container | MP4 | READY |
-| Container | MOV | READY |
-| Container | M4V | READY |
-| Container | MKV | BACKEND |
-| Container | AVI | BACKEND / P2 |
-| Video | H.264 / AVC | READY in native containers; BACKEND in MKV/AVI |
+| Konteyner | MP4 | READY |
+| Konteyner | MOV | READY |
+| Konteyner | M4V | READY |
+| Konteyner | MKV | BACKEND |
+| Konteyner | AVI | BACKEND / P2 |
+| Video | H.264 / AVC | Yerleşik konteynerlerde READY; MKV/AVI'de BACKEND |
 | Video | MPEG-4 Part 2 / Xvid | P2 |
-| Audio | AAC | READY in native containers; BACKEND in MKV |
-| Audio | MP3 | BACKEND in MKV |
-| Audio | AC3 | P2 |
-| Audio | E-AC3 | P2 |
-| Subtitle | external SRT | READY |
-| Subtitle | embedded SRT | BACKEND |
-| Subtitle | ASS / SSA | BACKEND |
+| Ses | AAC | Yerleşik konteynerlerde READY; MKV'de BACKEND |
+| Ses | MP3 | MKV'de BACKEND |
+| Ses | AC3 | P2 |
+| Ses | E-AC3 | P2 |
+| Altyazı | harici SRT | READY |
+| Altyazı | gömülü SRT | BACKEND |
+| Altyazı | ASS / SSA | BACKEND |
 | Video | HEVC / H.265 | OUT |
 | Video | AV1 | OUT |
 | Video | VP9 | OUT |
-| Video | 4K/HDR/modern 10-bit | OUT |
+| Video | 4K/HDR/güncel 10 bit | OUT |
